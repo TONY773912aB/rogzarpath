@@ -1,4 +1,4 @@
-package com.example.rogzarpath
+package com.rogzarpath.govexam
 
 import io.flutter.embedding.android.FlutterActivity
 

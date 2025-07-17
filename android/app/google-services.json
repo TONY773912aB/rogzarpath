@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1091229655342",
+    "project_id": "reelo-4a48d",
+    "storage_bucket": "reelo-4a48d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1091229655342:android:8ae673054c66400b6cdabf",
+        "android_client_info": {
+          "package_name": "com.rogzarpath.govexam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1091229655342-35v499u882c459gqeipvedap4rlhqapd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rogzarpath.govexam",
+            "certificate_hash": "01529e326043ac70ff9da96a2c79f9cacd758bd9"
+          }
+        },
+        {
+          "client_id": "1091229655342-7k1vcrkpri3bl88op3k8ic0v9oruvvjj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAC7EDgtcQG0sset5UNjceS8eqaVT9Rix8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091229655342-7k1vcrkpri3bl88op3k8ic0v9oruvvjj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
