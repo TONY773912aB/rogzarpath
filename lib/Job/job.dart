@@ -1,6 +1,8 @@
-// lib/screens/jobs_screen.dart
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:rogzarpath/Job/job_detail_screen.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -33,47 +35,24 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
 
-    return DefaultTabController(
-      length: categories.length + 1,
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF00B4DB), Color(0xFF0083B0)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-          ),
-          title: const Text(
-            'Govt Job Updates',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-              color: Colors.white,
-            ),
-          ),
-          bottom: TabBar(
-            controller: tabController,
-            isScrollable: true,
-            indicatorColor: Colors.white,
-            labelColor: Colors.white,
-            unselectedLabelColor: Colors.white70,
-            tabs: [
-              const Tab(text: "All"),
-              ...categories.map((cat) => Tab(text: cat['name'])).toList(),
-            ],
-          ),
-        ),
-        body: TabBarView(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Latest Govt Jobs'),
+        bottom: TabBar(
           controller: tabController,
-          children: [
-            const JobsListWidget(), // All jobs
-            ...categories.map((cat) => JobsListWidget(categoryId: cat['id'])).toList(),
+          isScrollable: true,
+          tabs: [
+            const Tab(text: "All"),
+            ...categories.map((cat) => Tab(text: cat['name'])).toList()
           ],
         ),
+      ),
+      body: TabBarView(
+        controller: tabController,
+        children: [
+          JobsListWidget(), // All jobs
+          ...categories.map((cat) => JobsListWidget(categoryId: cat['id'])).toList()
+        ],
       ),
     );
   }
@@ -89,12 +68,14 @@ class JobsListWidget extends StatefulWidget {
 
 class _JobsListWidgetState extends State<JobsListWidget> {
   List<dynamic> jobs = [];
+  List<String> favouriteJobIds = [];
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     loadJobs();
+    loadFavourites();
   }
 
   void loadJobs() async {
@@ -105,52 +86,76 @@ class _JobsListWidgetState extends State<JobsListWidget> {
     });
   }
 
+  void loadFavourites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList('favouriteJobs') ?? [];
+    setState(() {
+      favouriteJobIds = saved;
+    });
+  }
+
+  void toggleFavourite(String jobId) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (favouriteJobIds.contains(jobId)) {
+        favouriteJobIds.remove(jobId);
+      } else {
+        favouriteJobIds.add(jobId);
+      }
+      prefs.setStringList('favouriteJobs', favouriteJobIds);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (jobs.isEmpty) {
-      return const Center(
-        child: Text("No jobs found", style: TextStyle(fontSize: 16)),
-      );
-    }
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (jobs.isEmpty) return const Center(child: Text("No jobs found"));
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.all(12),
       itemCount: jobs.length,
       itemBuilder: (context, index) {
         final job = jobs[index];
+        final jobId = job['id'].toString();
         final title = job['title']['rendered'];
-        final date = job['date'];
+        final date = DateFormat('dd MMM yyyy').format(DateTime.parse(job['date']));
+        final isFavourite = favouriteJobIds.contains(jobId);
 
         return Card(
+          margin: const EdgeInsets.only(bottom: 12),
+          elevation: 3,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 4,
-          margin: const EdgeInsets.symmetric(vertical: 8),
           child: ListTile(
             contentPadding: const EdgeInsets.all(16),
             title: Text(
               title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                children: [
-                  const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
-                  const SizedBox(width: 6),
-                  Text(date, style: const TextStyle(color: Colors.grey)),
-                ],
-              ),
+              child: Text("Published: $date"),
             ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 18),
+            trailing: IconButton(
+              icon: Icon(
+                isFavourite ? Icons.favorite : Icons.favorite_border,
+                color: isFavourite ? Colors.red : Colors.grey,
+              ),
+              onPressed: () => toggleFavourite(jobId),
+            ),
             onTap: () {
-              // TODO: Navigate to Job Detail Page
+              print('Job ID: ${job['id']}');
+
+              Navigator.push(
+  context,
+  MaterialPageRoute(
+    builder: (_) => JobDetailScreen(
+      jobId: job['id'],
+    jobTitle: job['title']['rendered'],
+    ),
+  ),
+);
+
+              // TODO: Navigate to job details
             },
           ),
         );
