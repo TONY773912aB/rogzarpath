@@ -1,70 +1,46 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:rogzarpath/constant/AppConstant.dart';
-import 'package:rogzarpath/dashboard.dart';
-import 'package:rogzarpath/homepage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
-// Reusable styled button
+import 'package:rogzarpath/auth_service.dart';
+import 'package:rogzarpath/dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(LoginScreen());
-}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
+  
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final AuthService _authService = AuthService();
   bool _isSigningIn = false;
 
-  Future<void> _signInWithGoogle() async {
+  @override
+  void initState() {
+    super.initState();
+    Firebase.initializeApp();
+  }
+
+void saveLoginStatus() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool('isLoggedIn', true);
+}
+
+  void _handleGoogleLogin() async {
     setState(() => _isSigningIn = true);
+    final user = await _authService.signInWithGoogle();
 
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        setState(() => _isSigningIn = false);
-        return; // user canceled
-      }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+    if (user != null) {
+      saveLoginStatus();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => DashboardScreen()),
       );
-
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      User? user = userCredential.user;
-
-      if (user != null) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('uid', user.uid);
-        await prefs.setString('name', user.displayName ?? '');
-        await prefs.setString('email', user.email ?? '');
-        await prefs.setString('photoUrl', user.photoURL ?? '');
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => DashboardScreen()),
-        );
-      }
-    } catch (e) {
-      print('Login error: $e');
-    } finally {
-      setState(() => _isSigningIn = false);
     }
-  }   
+
+    setState(() => _isSigningIn = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,26 +59,34 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.school_rounded, size: 90, color: Colors.white),
+                const Icon(Icons.school_rounded, size: 90, color: Colors.white),
                 const SizedBox(height: 20),
-                Text(
+                const Text(
                   "Welcome to RogzarPath",
-                  style: TextStyle(
-                    fontSize: 26,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 26, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   "Your Govt. Exam Preparation Guide",
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.white70),
                 ),
                 const SizedBox(height: 40),
                 _isSigningIn
-                    ? CircularProgressIndicator(color: Colors.white)
-                    : GoogleLoginButton(onPressed: _signInWithGoogle),
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : ElevatedButton.icon(
+                        icon: const Icon(Icons.login),
+                        label: const Text("Sign in with Google"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        ),
+                        onPressed: _handleGoogleLogin,
+                      ),
               ],
             ),
           ),

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:rogzarpath/loginscreen.dart';
-
+import 'package:rogzarpath/dashboard.dart'; // Create this page
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -31,12 +32,24 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 3), checkLoginStatus);
+  }
+
+  Future<void> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => DashboardScreen()),
+      );
+    } else {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => LoginScreen()),
       );
-    });
+    }
   }
 
   @override
@@ -62,11 +75,8 @@ class _SplashScreenState extends State<SplashScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // App logo (optional, add your own asset later)
                 Icon(Icons.school_rounded, size: 80, color: Colors.white),
-
                 const SizedBox(height: 20),
-
                 Text(
                   "RogzarPath",
                   style: TextStyle(
@@ -76,9 +86,7 @@ class _SplashScreenState extends State<SplashScreen>
                     letterSpacing: 1.5,
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   "Your Govt. Exam Guide",
                   style: TextStyle(

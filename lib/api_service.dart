@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {  
-  static const String baseUrl = 'https://gyankikhoj.in/wp-json/wp/v2';
+
+  static const String baseUrl = 'https://vacancygyan.in/wp-json/wp/v2';
+  static const String appUrl = 'http://10.161.153.180/rozgarapp/';
 
   static Future<List<dynamic>> fetchCategories() async {
     final response = await http.get(Uri.parse('$baseUrl/categories'));

@@ -76,6 +76,24 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     final link = job?['link'] ?? '';
     Share.share('Check out this job opportunity:\n$link');
   }
+  Future<bool> onTapUrl(BuildContext context, String? url) async {
+  try {
+    final uri = Uri.tryParse(url ?? '');
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Could not open the link")),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Error opening link: $e")),
+    );
+  }
+  return true;
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +121,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         ],
       ),
       body: isLoading
-          ? CircularProgressIndicator()
+          ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Column(
@@ -150,14 +168,20 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   HtmlWidget(
                     job!['content']['rendered'],
                     textStyle: const TextStyle(fontSize: 16),
-                  onTapUrl: (url) async {
+                 // onTapUrl: (url) => onTapUrl(context, url)
+                 onTapUrl: (url) async {
+  print("Tapped URL: $url"); // <-- Add this line
+  if (url == null || url.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Invalid URL")),
+    );
+    return true;
+  }
+
   try {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication, // Force using browser
-      );
+    final uri = Uri.tryParse(url);
+    if (uri != null && await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Could not open the link")),
@@ -169,7 +193,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     );
   }
   return true;
-},
+}
+
+,
                     customStylesBuilder: (element) {
                       switch (element.localName) {
                         case 'table':
@@ -209,7 +235,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                             'color': '#2c3e50',
                           };
                         case 'h2':
-                          return {
+                          return {             
                             'font-size': '22px',
                             'font-weight': 'bold',
                             'color': '#2c3e50',
