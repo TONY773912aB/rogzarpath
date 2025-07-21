@@ -25,13 +25,13 @@ class HomeScreen extends StatelessWidget {
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1581092580487-4c4c0c37cf57?auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=60',
       'title': 'SSC Exams Mock Tests',
       'desc': 'Practice with real exam pattern tests'
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1596495577886-d920f1fb7238?auto=format&fit=crop&w=800&q=60',
+          'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=60',
       'title': 'Banking Exam Updates',
       'desc': 'Get latest IBPS, SBI & RBI notifications'
     },

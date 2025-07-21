@@ -39,17 +39,30 @@ class AuthService {
     return null;
   }
   
-  Future<void> saveUserToMySQL(String name, String email, String googleId, String photo) async {
-    final uri = Uri.parse("http://10.161.153.180/rozgarapp/save_user.php"); // Update for host/production
-    try {
-      await http.post(uri, body: {
+
+Future<void> saveUserToMySQL(String name, String email, String googleId, String photoUrl) async {
+  final uri = Uri.parse("http://10.161.153.180/rozgarapp/save_user.php"); // Use your live IP or domain in production
+
+  try {
+    final response = await http.post(
+      uri,
+      body: {
         'name': name,
         'email': email,
         'google_id': googleId,
-        'photo': photo,
-      });
-    } catch (e) {
-      print("Error saving user to MySQL: $e");
+        'photo_url': photoUrl,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print("✅ User saved successfully to MySQL");
+    } else {
+      print("⚠️ Server error: ${response.statusCode}");
+      print("Response body: ${response.body}");
     }
+  } catch (e) {
+    print("❌ Exception saving user to MySQL: $e");
   }
+}
+
 }

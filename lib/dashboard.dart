@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rogzarpath/Job/job.dart';
 import 'package:rogzarpath/Mcq/examlist.dart';
+import 'package:rogzarpath/MockTest/mockexamlist.dart';
 import 'package:rogzarpath/Profile/profile.dart';
 import 'package:rogzarpath/homepage.dart';
 
@@ -19,7 +20,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     HomeScreen(),
     JobsScreen(),
     ExamList(),
+    MockExamList(),
     ProfileScreen(),
+
   ];
 
   @override
@@ -44,6 +47,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.quiz_rounded),
             label: 'MCQs',
+          ),
+           BottomNavigationBarItem(
+            icon: Icon(Icons.quiz_outlined),
+            label: 'MockTest',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

@@ -29,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       photoUrl = prefs.getString('photoUrl') ?? '';
     });
   }
-
+   
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
     SharedPreferences prefs = await SharedPreferences.getInstance();
