@@ -1,33 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:rogzarpath/Mcq/subject_screen.dart';
+import 'package:rogzarpath/Mcq/mcq_screen.dart';
 import 'package:rogzarpath/api_service.dart';
 
-class ExamScreen extends StatefulWidget {
+class SubjectScreen extends StatefulWidget {
+  final String examId;
+  final String examName;
+
+  const SubjectScreen({required this.examId, required this.examName});
+
   @override
-  _ExamScreenState createState() => _ExamScreenState();
+  _SubjectScreenState createState() => _SubjectScreenState();
 }
 
-class _ExamScreenState extends State<ExamScreen> {
-  List exams = [];
+class _SubjectScreenState extends State<SubjectScreen> {
+  List subjects = [];
   bool isLoading = true;
   String errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    loadExams();
+    loadSubjects();
+    print("📦 Sending exam_id = ${widget.examId}");
   }
 
-  Future<void> loadExams() async {
+  Future<void> loadSubjects() async {
     try {
-      final fetchedExams = await ApiService.getExams();
+      final fetchedSubjects = await ApiService.getSubjects(widget.examId);
       setState(() {
-        exams = fetchedExams;
+        subjects = fetchedSubjects;
         isLoading = false;
       });
     } catch (e) {
       setState(() {
         errorMessage = e.toString();
+        print(errorMessage);
         isLoading = false;
       });
     }
@@ -37,8 +44,8 @@ class _ExamScreenState extends State<ExamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Exam'),
-        backgroundColor: Colors.deepPurpleAccent,
+        title: Text('${widget.examName} Subjects'),
+        backgroundColor: Colors.deepPurple,
         elevation: 0,
       ),
       body: isLoading
@@ -48,7 +55,7 @@ class _ExamScreenState extends State<ExamScreen> {
               : Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: GridView.builder(
-                    itemCount: exams.length,
+                    itemCount: subjects.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 12,
@@ -56,24 +63,25 @@ class _ExamScreenState extends State<ExamScreen> {
                       childAspectRatio: 1,
                     ),
                     itemBuilder: (context, index) {
-                      final exam = exams[index];
+                      final subject = subjects[index];
                       return GestureDetector(
                         onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => SubjectScreen(
-        examId: exam['id'],
-        examName: exam['name'],
-      ),
-    ),
-  );
-},
-
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MCQScreen(
+                                examId: subject['exam_id'].toString(),
+                                subjectId: subject['id'].toString(),
+                                subjectName: subject['name'],
+                                userId: "1", // You can pass userId if needed
+                              ),
+                            ),
+                          );
+                        },
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Colors.deepPurple, Colors.purpleAccent],
+                              colors: [Colors.orange, Colors.deepOrangeAccent],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
@@ -88,15 +96,16 @@ class _ExamScreenState extends State<ExamScreen> {
                           ),
                           child: Center(
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.menu_book_rounded,
+                                  Icon(Icons.book,
                                       size: 40, color: Colors.white),
                                   SizedBox(height: 12),
                                   Text(
-                                    exam['name'],
+                                    subject['name'],
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,

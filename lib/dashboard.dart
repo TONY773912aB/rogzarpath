@@ -19,7 +19,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Widget> _screens = [
     HomeScreen(),
     JobsScreen(),
-    ExamList(),
+    ExamScreen(),
     MockExamList(),
     ProfileScreen(),
 
