@@ -1,10 +1,8 @@
-// mcq_screen.dart
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:rogzarpath/api_service.dart';
 import 'package:rogzarpath/constant/model.dart';
-
 
 class MCQScreen extends StatefulWidget {
   final String examId;
@@ -15,7 +13,7 @@ class MCQScreen extends StatefulWidget {
   const MCQScreen({
     required this.examId,
     required this.subjectId,
-     required this.subjectName,
+    required this.subjectName,
     required this.userId,
     super.key,
   });
@@ -27,7 +25,7 @@ class MCQScreen extends StatefulWidget {
 class _MCQScreenState extends State<MCQScreen> {
   List<MCQ> mcqs = [];
   bool isLoading = true;
-  
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -52,135 +50,283 @@ class _MCQScreenState extends State<MCQScreen> {
         });
       } else {
         showError("No MCQs found.");
-        print("No MCQs found.");
       }
     } else {
       showError("Failed to load MCQs.");
-      print("Failed to load MCQs.");
     }
   }
 
   void showError(String message) {
-    setState(() {
-      isLoading = false;
-    });
+    setState(() => isLoading = false);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  void submitAnswer(int index) {
-    final mcq = mcqs[index];
-    if (mcq.selectedOption == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Please select an option.")),
-      );
-      return;
+  void toggleBookmark(int index) {
+    setState(() => mcqs[index].isBookmarked = !mcqs[index].isBookmarked);
+  }
+
+  void selectOption(String label) {
+    if (mcqs[currentIndex].selectedOption != null) return;
+    setState(() {
+      mcqs[currentIndex].selectedOption = label;
+    });
+  }
+
+  Widget buildOption(MCQ mcq, String text, String label) {
+    bool isCorrect = mcq.selectedOption != null && label == mcq.correctOption;
+    bool isWrong = mcq.selectedOption == label && label != mcq.correctOption;
+    bool isSelected = mcq.selectedOption == label;
+
+    Color bgColor;
+    if (isCorrect) {
+      bgColor = Colors.green.shade100;
+    } else if (isWrong) {
+      bgColor = Colors.red.shade100;
+    } else if (isSelected) {
+      bgColor = Colors.deepPurple.shade50;
+    } else {
+      bgColor = Colors.white;
     }
 
-    setState(() {}); // Triggers explanation display
-  }
+    Color borderColor;
+    if (isCorrect) {
+      borderColor = Colors.green;
+    } else if (isWrong) {
+      borderColor = Colors.red;
+    } else if (isSelected) {
+      borderColor = Colors.deepPurple;
+    } else {
+      borderColor = Colors.grey.shade300;
+    }
 
-  void toggleBookmark(int index) {
-    setState(() {
-      mcqs[index].isBookmarked = !mcqs[index].isBookmarked;
-    });
-
-    // Optionally: Send API call to update backend
-  }
-
-  Widget buildOption(MCQ mcq, String option, String label, int index) {
-    final isCorrect = mcq.selectedOption != null && label == mcq.correctOption;
-    final isWrong = mcq.selectedOption == label && label != mcq.correctOption;
-
-    return RadioListTile<String>(
-      title: Text(
-        option,
-        style: TextStyle(
-          color: isCorrect
-              ? Colors.green
-              : isWrong
-                  ? Colors.red
-                  : Colors.black,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgColor,
+        border: Border.all(color: borderColor, width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          if (isSelected || isCorrect || isWrong)
+            BoxShadow(
+              color: borderColor.withOpacity(0.3),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            )
+        ],
+      ),
+      child: InkWell(
+        onTap: () => selectOption(label),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              backgroundColor: borderColor,
+              radius: 14,
+              child: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: isCorrect
+                      ? Colors.green.shade900
+                      : isWrong
+                          ? Colors.red.shade900
+                          : Colors.black87,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            )
+          ],
         ),
       ),
-      value: label,
-      groupValue: mcq.selectedOption,
-      onChanged: mcq.selectedOption == null
-          ? (value) {
-              setState(() {
-                mcqs[index].selectedOption = value;
-              });
-            }
-          : null,
     );
+  }
+
+  // ✅ Submit user attempts to API
+  Future<void> submitAttempts() async {
+    final url = Uri.parse('${ApiService.appUrl}save_mcq_attempt.php');
+
+    final attempts = mcqs
+        .where((mcq) => mcq.selectedOption != null)
+        .map((mcq) => {
+              "question_id": mcq.id,
+              "selected_option": mcq.selectedOption,
+            })
+        .toList();
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        "user_id": UserTable.googleId,
+        "attempts": attempts,
+      }),
+    );
+
+    final data = jsonDecode(response.body);
+    if (data['status']) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("✅ Submitted"),
+          content: const Text("Your answers have been submitted successfully."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data['message'] ?? "Submission failed")),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final mcq = mcqs.isNotEmpty ? mcqs[currentIndex] : null;
+
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        title: Text(widget.subjectName),
+        backgroundColor: Colors.deepPurple,
+        elevation: 2,
+        title: Text(widget.subjectName, style: const TextStyle(fontWeight: FontWeight.w600)),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              padding: EdgeInsets.all(12),
-              itemCount: mcqs.length,
-              itemBuilder: (context, index) {
-                final mcq = mcqs[index];
-                return Card(
-                  margin: EdgeInsets.only(bottom: 20),
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                "Q${index + 1}. ${mcq.question}",
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ? const Center(child: CircularProgressIndicator())
+          : mcqs.isEmpty
+              ? const Center(child: Text("No MCQs found."))
+              : Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "Q${currentIndex + 1}. ${mcq!.question}",
+                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => toggleBookmark(currentIndex),
+                            icon: Icon(
+                              mcq.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                              color: mcq.isBookmarked ? Colors.orange : Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      buildOption(mcq, mcq.optionA, 'A'),
+                      buildOption(mcq, mcq.optionB, 'B'),
+                      buildOption(mcq, mcq.optionC, 'C'),
+                      buildOption(mcq, mcq.optionD, 'D'),
+                      const SizedBox(height: 16),
+                      if (mcq.selectedOption != null) ...[
+                        Text(
+                          "✔ Correct Answer: ${mcq.correctOption}",
+                          style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          "📝 Explanation: ${mcq.explanation}",
+                          style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Previous Button
+                          GestureDetector(
+                            onTap: currentIndex > 0 ? () => setState(() => currentIndex--) : null,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              decoration: BoxDecoration(
+                                gradient: currentIndex > 0
+                                    ? const LinearGradient(colors: [Color(0xFF6A11CB), Color(0xFF2575FC)])
+                                    : const LinearGradient(colors: [Colors.grey, Colors.grey]),
+                                borderRadius: BorderRadius.circular(30),
+                                boxShadow: currentIndex > 0
+                                    ? [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          blurRadius: 6,
+                                          offset: const Offset(0, 3),
+                                        ),
+                                      ]
+                                    : [],
+                              ),
+                              child: Row(
+                                children: const [
+                                  Icon(Icons.arrow_back, color: Colors.white),
+                                  SizedBox(width: 8),
+                                  Text("Previous", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                                ],
                               ),
                             ),
-                            IconButton(
-                              icon: Icon(
-                                mcq.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                                color: mcq.isBookmarked ? Colors.orange : Colors.grey,
-                              ),
-                              onPressed: () => toggleBookmark(index),
-                            )
-                          ],
-                        ),
-                        buildOption(mcq, mcq.optionA, 'A', index),
-                        buildOption(mcq, mcq.optionB, 'B', index),
-                        buildOption(mcq, mcq.optionC, 'C', index),
-                        buildOption(mcq, mcq.optionD, 'D', index),
-                        const SizedBox(height: 10),
-                        if (mcq.selectedOption == null)
-                          ElevatedButton(
-                            onPressed: () => submitAnswer(index),
-                            child: Text("Submit Answer"),
                           ),
-                        if (mcq.selectedOption != null)
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Correct Answer: ${mcq.correctOption}",
-                                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+
+                          // Next or Submit Button
+                          GestureDetector(
+                            onTap: () {
+                              if (currentIndex < mcqs.length - 1) {
+                                setState(() => currentIndex++);
+                              } else {
+                                submitAttempts();
+                              }
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              decoration: BoxDecoration(
+                                gradient: currentIndex < mcqs.length - 1
+                                    ? const LinearGradient(colors: [Color(0xFF43C6AC), Color(0xFF191654)])
+                                    : const LinearGradient(colors: [Color(0xFF00B09B), Color(0xFF96C93D)]),
+                                borderRadius: BorderRadius.circular(30),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text("Explanation: ${mcq.explanation}"),
-                            ],
-                          )
-                      ],
-                    ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    currentIndex < mcqs.length - 1 ? "Next" : "Submit",
+                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    currentIndex < mcqs.length - 1 ? Icons.arrow_forward : Icons.check_circle,
+                                    color: Colors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
-                );
-              },
-            ),
+                ),
     );
   }
 }

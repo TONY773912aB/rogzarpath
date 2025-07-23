@@ -38,3 +38,30 @@ class MCQ {
     );
   }
 }
+
+
+class UserTable {
+  static String googleId = "";
+  static String name = "";
+  static String email = "";
+  static String photoUrl = "";
+
+  static void setUser({
+    required String id,
+    required String userName,
+    required String userEmail,
+    required String userPhoto,
+  }) {
+    googleId = id;
+    name = userName;
+    email = userEmail;
+    photoUrl = userPhoto;
+  }
+
+  static void clear() {
+    googleId = "";
+    name = "";
+    email = "";
+    photoUrl = "";
+  }
+}

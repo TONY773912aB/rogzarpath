@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rogzarpath/Mcq/mcq_screen.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/model.dart';
 
 class SubjectScreen extends StatefulWidget {
   final String examId;
@@ -29,6 +30,7 @@ class _SubjectScreenState extends State<SubjectScreen> {
       final fetchedSubjects = await ApiService.getSubjects(widget.examId);
       setState(() {
         subjects = fetchedSubjects;
+        print(subjects);
         isLoading = false;
       });
     } catch (e) {
@@ -70,10 +72,10 @@ class _SubjectScreenState extends State<SubjectScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MCQScreen(
-                                examId: subject['exam_id'].toString(),
+                                examId: widget.examId,
                                 subjectId: subject['id'].toString(),
                                 subjectName: subject['name'],
-                                userId: "1", // You can pass userId if needed
+                                userId: UserTable.googleId, // You can pass userId if needed
                               ),
                             ),
                           );

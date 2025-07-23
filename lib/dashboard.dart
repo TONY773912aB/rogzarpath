@@ -3,6 +3,7 @@ import 'package:rogzarpath/Job/job.dart';
 import 'package:rogzarpath/Mcq/examlist.dart';
 import 'package:rogzarpath/MockTest/mockexamlist.dart';
 import 'package:rogzarpath/Profile/profile.dart';
+import 'package:rogzarpath/constant/model.dart';
 import 'package:rogzarpath/homepage.dart';
 
 
@@ -14,6 +15,15 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+   
+   @override
+  void initState() {
+    print("User ID: ${UserTable.googleId}");
+print("User Name: ${UserTable.name}");
+print("Email: ${UserTable.email}");
+    super.initState();
+  }
+
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
@@ -25,6 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   ];
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
