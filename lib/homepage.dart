@@ -31,10 +31,11 @@ final List<_HomeFeature> features = [
   }),
   _HomeFeature("Current Affairs", Icons.newspaper, (context) {
     print("Current Affairs..........................................");
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => DailyNewsScreen()),
-    );
+    Navigator.push(
+  context,
+  MaterialPageRoute(builder: (_) => DailyNewsScreen()),
+);
+
     print("Notifications tapped");
   }),
   _HomeFeature("More", Icons.more_horiz, (context) {

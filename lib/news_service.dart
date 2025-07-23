@@ -21,17 +21,21 @@ class NewsItem {
 class NewsService {
   static const String _apiKey = "pub_73958babb8f34d16bb9737585762296d";
 
-  static Future<List<NewsItem>> fetchCurrentAffairs({bool isHindi = false}) async {
-    final language = isHindi ? "hi" : "en";
-    final url = Uri.parse("https://newsdata.io/api/1/news?apikey=$_apiKey&country=in&language=$language&category=top");
+  static Future<List<NewsItem>> fetchCurrentAffairs({String language = 'en'}) async {
+    final url = Uri.parse(
+      "https://newsdata.io/api/1/news?apikey=$_apiKey&q=current%20affairs&language=$language",
+    );
 
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
-      final List articles = json.decode(response.body)['results'];
-      return articles.map((e) => NewsItem.fromJson(e)).toList();
+      final utf8Body = utf8.decode(response.bodyBytes); // ✅ Fix Hindi/UTF text
+      final jsonData = json.decode(utf8Body);
+      final List articles = jsonData['results'] ?? [];
+
+      return articles.map((json) => NewsItem.fromJson(json)).toList();
     } else {
-      throw Exception("Failed to load news");
+      throw Exception("❌ Failed to load current affairs. Status: ${response.statusCode}");
     }
   }
 }

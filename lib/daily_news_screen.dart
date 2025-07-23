@@ -19,22 +19,31 @@ class _DailyNewsScreenState extends State<DailyNewsScreen> {
   }
 
   void _loadNews() {
-    _newsFuture = NewsService.fetchCurrentAffairs(isHindi: isHindi);
-  }
+  setState(() {
+    _newsFuture = NewsService.fetchCurrentAffairs(language: isHindi ? 'hi' : 'en');
+  });
+}
 
-  void _toggleLanguage(bool value) {
-    setState(() {
-      isHindi = value;
-      _loadNews();
-    });
-  }
+void _toggleLanguage(bool value) {
+  setState(() {
+    isHindi = value;
+    _loadNews(); // Refresh news when language changes
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text("📰 Daily Current Affairs"),
+        title: Text("Daily Current Affairs"),
+       leading: IconButton(
+    icon: Icon(Icons.arrow_back), // or Icons.arrow_back_ios
+    onPressed: () {
+      Navigator.pop(context); // 👈 goes back to the previous screen
+    },
+  ),
         backgroundColor: Colors.deepPurple,
         actions: [
           Row(
