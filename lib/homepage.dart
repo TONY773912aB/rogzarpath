@@ -1,20 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:rogzarpath/daily_news_screen.dart';
+import 'package:rogzarpath/dashboard.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
-  final List<_HomeFeature> features = const [
-    _HomeFeature("Govt Jobs", Icons.work_rounded),
-    _HomeFeature("Practice MCQs", Icons.quiz_rounded),
-    _HomeFeature("Mock Tests", Icons.assignment_turned_in),
-    _HomeFeature("Daily Quiz", Icons.calendar_today),
-    _HomeFeature("PDF Notes", Icons.picture_as_pdf),
-    _HomeFeature("Test History", Icons.history_edu),
-    _HomeFeature("Leaderboard", Icons.leaderboard),
-    _HomeFeature("Notifications", Icons.notifications),
-    _HomeFeature("More", Icons.more_horiz),
-  ];
+
+final List<_HomeFeature> features = [
+  _HomeFeature("Govt Jobs", Icons.work_rounded, (context) {
+    print("Govt Jobs tapped");
+  }),
+  _HomeFeature("Practice MCQs", Icons.quiz_rounded, (context) {
+    print("Practice MCQs tapped");
+  }),
+  _HomeFeature("Mock Tests", Icons.assignment_turned_in, (context) {
+    print("Mock Tests tapped");
+  }),
+  _HomeFeature("Daily Quiz", Icons.calendar_today, (context) {
+    print("Daily Quiz tapped");
+  }),
+  _HomeFeature("PDF Notes", Icons.picture_as_pdf, (context) {
+    print("PDF Notes tapped");
+  }),
+  _HomeFeature("Test History", Icons.history_edu, (context) {
+    print("Test History tapped");
+  }),
+  _HomeFeature("Leaderboard", Icons.leaderboard, (context) {
+    print("Leaderboard tapped");
+  }),
+  _HomeFeature("Current Affairs", Icons.newspaper, (context) {
+    print("Current Affairs..........................................");
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => DailyNewsScreen()),
+    );
+    print("Notifications tapped");
+  }),
+  _HomeFeature("More", Icons.more_horiz, (context) {
+    print("More tapped");
+  }),
+];
+
 
   final List<Map<String, String>> sliderData = [
     {
@@ -177,6 +204,7 @@ class HomeScreen extends StatelessWidget {
                   final feature = features[index];
                   return GestureDetector(
                     onTap: () {
+                      feature.onTap(context);
                       // Navigate to respective screen
                     },
                     child: Container(
@@ -222,5 +250,7 @@ class HomeScreen extends StatelessWidget {
 class _HomeFeature {
   final String label;
   final IconData icon;
-  const _HomeFeature(this.label, this.icon);
+  final void Function(BuildContext context) onTap;
+
+  _HomeFeature(this.label, this.icon, this.onTap);
 }
