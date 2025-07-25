@@ -1,6 +1,7 @@
 // lib/services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:rogzarpath/constant/model.dart';
 
 class ApiService {  
 
@@ -95,3 +96,78 @@ static Future<List<dynamic>> getSubjects(String examId) async {
 
   static getSubjectsByExam(String examId) {}
 }
+
+
+class MockTestService {
+  static const baseUrl = 'http://10.161.153.180/rozgarapp/';
+
+static Future<List<MockTest>> getTests(int examId) async {
+  final response = await http.post(
+    Uri.parse('${baseUrl}get_mock_tests.php'),
+    body: {'exam_id': examId.toString()}, // Always send as string
+  );
+
+  if (response.statusCode == 200) {
+    try {
+      final data = json.decode(response.body);
+      if (data['status'] == true) {
+        List<dynamic> testList = data['data'];
+        return testList.map((e) => MockTest.fromJson(e)).toList();
+      } else {
+        throw Exception(data['message']);
+      }
+    } catch (e) {
+      print('Error parsing response: $e');
+      print('Raw response: ${response.body}');
+      throw Exception("Invalid response format");
+    }
+  } else {
+    throw Exception('Failed to load tests');
+  }
+}
+
+
+
+ static Future<List<MockQuestion>> getQuestions(int testId) async {
+  final response = await http.post(
+    Uri.parse('${baseUrl}get_mock_test_questions.php'),
+    body: {'test_id': testId.toString()},
+  );
+
+  print('🔍 Raw response: ${response.body}');
+
+  if (response.statusCode == 200) {
+    final decoded = json.decode(response.body);
+
+    print('🧪 Decoded JSON: $decoded');
+
+    if (decoded["status"] == true && decoded["questions"] != null) {
+      final questionsData = decoded["questions"];
+      return List<MockQuestion>.from(
+        questionsData.map((e) => MockQuestion.fromJson(e)),
+      );
+    } else {
+      throw Exception("No questions found or invalid response.");
+    }
+  } else {
+    throw Exception('Failed to load questions');
+  }
+}
+
+
+static Future<String> submitTest(Map<String, dynamic> submissionData) async {
+    final response = await http.post(
+      Uri.parse('${baseUrl}submit_mock_test.php'),
+      body: json.encode(submissionData),
+      headers: {'Content-Type': 'application/json'},
+    );
+    
+
+    if (response.statusCode == 200) {    
+      return response.body;
+    } else {
+      throw Exception('Submission failed');
+    }
+  }
+}
+

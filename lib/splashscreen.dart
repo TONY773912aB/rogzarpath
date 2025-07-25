@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:rogzarpath/loginscreen.dart';
-import 'package:rogzarpath/dashboard.dart'; // Create this page
+import 'package:rogzarpath/constant/model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rogzarpath/loginscreen.dart';
+import 'package:rogzarpath/dashboard.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1200),
     );
 
     _animation = CurvedAnimation(
@@ -32,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    Timer(Duration(seconds: 3), checkLoginStatus);
+    Timer(const Duration(seconds: 3), checkLoginStatus);
   }
 
   Future<void> checkLoginStatus() async {
@@ -40,14 +41,28 @@ class _SplashScreenState extends State<SplashScreen>
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
     if (isLoggedIn) {
+      // Load user data
+      String googleId = prefs.getString('googleId') ?? "";
+      String name = prefs.getString('name') ?? "";
+      String email = prefs.getString('email') ?? "";
+      String photoUrl = prefs.getString('photoUrl') ?? "";
+
+      // Update UserTable with loaded values
+      UserTable.setUser(
+        id: googleId,
+        userName: name,
+        userEmail: email,
+        userPhoto: photoUrl,
+      );
+
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => DashboardScreen()),
+        MaterialPageRoute(builder: (_) => const DashboardScreen()),
       );
     } else {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
@@ -74,9 +89,9 @@ class _SplashScreenState extends State<SplashScreen>
             scale: _animation,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: const [
                 Icon(Icons.school_rounded, size: 80, color: Colors.white),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Text(
                   "RogzarPath",
                   style: TextStyle(
@@ -86,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen>
                     letterSpacing: 1.5,
                   ),
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: 10),
                 Text(
                   "Your Govt. Exam Guide",
                   style: TextStyle(
