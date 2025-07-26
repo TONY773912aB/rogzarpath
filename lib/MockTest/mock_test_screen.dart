@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:rogzarpath/constant/model.dart';
 import 'mock_test_result_screen.dart';
 
@@ -49,56 +50,102 @@ class _MockTestScreenState extends State<MockTestScreen> {
     });
   }
 
-  
- void submitTest() async {
+void submitTest() async {
   _timer.cancel();
-  int correct = 0;
 
-  for (var q in questions) {
-    if (userAnswers[q.id] == q.correctAns) correct++;
-  }
+  // Build the answers list from userAnswers map
+  final List<Map<String, dynamic>> answers = userAnswers.entries
+      .map((entry) => {
+            'question_id': entry.key,
+            'selected_option': entry.value,
+          })
+      .toList();
 
-  final submission = {
-  'user_id': 1,
-  'test_id': widget.test.id,
-  'start_time': startTime.toIso8601String(),
-  'end_time': DateTime.now().toIso8601String(),
-  'answers': jsonEncode(userAnswers.entries.map((e) => {   
-    'question_id': e.key,
-    'selected_option': e.value,
-  }).toList())
-};
-print("submission print............");
-print(submission);
+  // Set end time
+  final DateTime endTime = DateTime.now();
 
-  try {
-    final response = await MockTestService.submitTest(submission);
-    final jsonResponse = jsonDecode(response);
+  // You can replace this with dynamic user ID
+  final int userId = 1; // 🔁 Change this if using auth or SharedPreferences
 
-    if (jsonResponse['status'] == true) {
-      // Navigate only if submission was successful
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MockTestResultScreen(score: correct, total: questions.length),
+  // Submit to server
+  final result = await submitMockTest(
+    userId: userId,
+    testId: widget.test.id,
+    startTime: startTime,
+    endTime: endTime,
+    answers: answers,
+  );
+
+  // Handle result
+  if (result['success']) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MockTestResultScreen(
+          score: result['score'],
+          total: questions.length,
         ),
-      );
-    } else {
-      // Show error in console
-      print("❌ Submission failed: ${jsonResponse['message']}");
-      // Optional: Show snackbar/toast to user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Submission failed. Please try again.')),
-      );
-    }
-  } catch (e) {
-    print("❌ Error during submission: $e");
+      ),
+    );
+  } else {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('An error occurred while submitting.')),
+      SnackBar(content: Text('❌ Submission failed: ${result['message']}')),
     );
   }
 }
 
+
+
+
+Future<Map<String, dynamic>> submitMockTest({
+  required int userId,
+  required int testId,
+  required DateTime startTime,
+  required DateTime endTime,
+  required List<Map<String, dynamic>> answers, // List of {'question_id': 1, 'selected_option': 'A'}
+}) async {
+  final url = Uri.parse('http://10.161.153.180/rozgarapp/submit_mock_test.php'); // 🔁 Change to your actual URL
+
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'user_id': userId,
+        'test_id': testId,
+        'start_time': startTime.toIso8601String().substring(0, 19).replaceFirst('T', ' '),
+        'end_time': endTime.toIso8601String().substring(0, 19).replaceFirst('T', ' '),
+        'answers': answers,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("🔁 Response: ${response.body}");
+
+      final data = jsonDecode(response.body);
+      if (data['success']) {
+        print("✅ Submission successful");
+        return {
+          'success': true,
+          'score': data['score'],
+          'correct': data['correct'],
+          'wrong': data['wrong'],
+          'accuracy': data['accuracy'],
+          'submission_id': data['submission_id'],
+        };
+      } else {
+        print("⚠️ Submission failed: ${data['message']}");
+        return {'success': false, 'message': data['message']};
+      }
+    } else {
+      print("❌ HTTP error: ${response.statusCode}");
+      return {'success': false, 'message': 'Server error'};
+    }
+  } catch (e) {
+    print("❌ Exception during submission: $e");
+    return {'success': false, 'message': 'Exception: $e'};
+  }
+}
 
 
   @override

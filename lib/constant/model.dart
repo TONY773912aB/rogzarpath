@@ -128,3 +128,28 @@ class MockQuestion {
     );
   }
 }
+
+class SyllabusPDF {
+  final String id;
+  final String examName;
+  final String pdfTitle;
+  final String pdfUrl;
+
+  SyllabusPDF({
+    required this.id,
+    required this.examName,
+    required this.pdfTitle,
+    required this.pdfUrl,
+  });
+
+  factory SyllabusPDF.fromJson(Map<String, dynamic> json) {
+    return SyllabusPDF(
+      id: json['id'],
+      examName: json['exam_name'],
+      pdfTitle: json['pdf_title'],
+      pdfUrl: json['pdf_url'],
+    );
+  }
+}
+
+

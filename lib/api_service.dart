@@ -56,9 +56,6 @@ static Future<List<dynamic>> getSubjects(String examId) async {
  
 
 
-
-
-
   static Future<List<dynamic>> fetchCategories() async {
     final response = await http.get(Uri.parse('$baseUrl/categories'));
     if (response.statusCode == 200) {
@@ -78,7 +75,25 @@ static Future<List<dynamic>> getSubjects(String examId) async {
     }
   }
 
+static Future<List<SyllabusPDF>> fetchSyllabusPDFs() async {
+    final response = await http.get(Uri.parse("${appUrl}get_syllabus_pdfs.php"));
 
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      if (jsonData['success']) {
+        List<SyllabusPDF> list = (jsonData['data'] as List)
+            .map((item) => SyllabusPDF.fromJson(item))
+            .toList();
+        return list;
+      } else {
+        print(jsonData['message']);
+        throw Exception(jsonData['message']);
+      }
+    } else {
+      print("Failed to load PDFs");
+      throw Exception("Failed to load PDFs");
+    }
+  }
 
 
   static Future<List<dynamic>> fetchJobs({int? categoryId}) async {
