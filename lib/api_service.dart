@@ -6,7 +6,8 @@ import 'package:rogzarpath/constant/model.dart';
 class ApiService {  
 
   static const String baseUrl = 'https://vacancygyan.in/wp-json/wp/v2';
-  static const String appUrl = 'http://10.161.153.180/rozgarapp/';
+  //static const String appUrl = 'http://10.161.153.180/rozgarapp/';
+  static const String appUrl = 'https://rozgarpath.vacancygyan.in/';
   
    /// Fetch list of exams
   static Future<List<dynamic>> getExams() async {
@@ -26,6 +27,48 @@ class ApiService {
       throw Exception('Error fetching exams: $e');
     }
   }
+
+  static Future<bool> submitDailyQuiz({
+  required int userId,
+  required int totalQuestions,
+  required int attempted,
+  required int correct,
+  required int wrong,
+}) async {
+  final url = Uri.parse('$baseUrl/save_daily_quiz.php'); // Replace with your actual path
+
+  final response = await http.post(url, body: {
+    'user_id': userId.toString(),
+    'total_questions': totalQuestions.toString(),
+    'attempted': attempted.toString(),
+    'correct': correct.toString(),
+    'wrong': wrong.toString(),
+  });
+
+  if (response.statusCode == 200) {
+    final result = jsonDecode(response.body);
+    return result['status'] == true;
+  } else {
+    throw Exception('Failed to submit daily quiz');
+  }
+}
+
+
+   static Future<List<DailyQuizQuestion>> fetchDailyQuiz() async {
+  final response = await http.get(Uri.parse("http://10.161.153.180/rozgarapp/fetch_daily_quiz.php"));
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    if (data['status'] == 'success') {
+      List questions = data['questions'];
+      return questions.map((q) => DailyQuizQuestion.fromJson(q)).toList();
+    } else {
+      throw Exception("No quiz available today");
+    }
+  } else {
+    throw Exception("Failed to load quiz");
+  }
+}
    
  
 static Future<List<dynamic>> getSubjects(String examId) async {
@@ -112,9 +155,9 @@ static Future<List<SyllabusPDF>> fetchSyllabusPDFs() async {
   static getSubjectsByExam(String examId) {}
 }
 
-
 class MockTestService {
-  static const baseUrl = 'http://10.161.153.180/rozgarapp/';
+  //static const baseUrl = 'http://10.161.153.180/rozgarapp/';
+  static const String baseUrl = 'https://rozgarpath.vacancygyan.in/';
 
 static Future<List<MockTest>> getTests(int examId) async {
   final response = await http.post(

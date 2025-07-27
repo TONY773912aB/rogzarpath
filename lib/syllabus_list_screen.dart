@@ -18,7 +18,7 @@ class _SyllabusListScreenState extends State<SyllabusListScreen> {
     super.initState();
     futurePDFs = ApiService.fetchSyllabusPDFs();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

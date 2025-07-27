@@ -153,3 +153,34 @@ class SyllabusPDF {
 }
 
 
+class DailyQuizQuestion {
+  final int id;
+  final String question;
+  final String optionA;
+  final String optionB;
+  final String optionC;
+  final String optionD;
+  final String correctAns;
+
+  DailyQuizQuestion({
+    required this.id,
+    required this.question,
+    required this.optionA,
+    required this.optionB,
+    required this.optionC,
+    required this.optionD,
+    required this.correctAns,
+  });
+
+  factory DailyQuizQuestion.fromJson(Map<String, dynamic> json) {
+    return DailyQuizQuestion(
+      id: json['id'],
+      question: json['question'],
+      optionA: json['option_a'],
+      optionB: json['option_b'],
+      optionC: json['option_c'],
+      optionD: json['option_d'],
+      correctAns: json['correct_ans'],
+    );
+  }
+}

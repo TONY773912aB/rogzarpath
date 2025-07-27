@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:rogzarpath/daily_news_screen.dart';
+import 'package:rogzarpath/daily_quiz_screen.dart';
 import 'package:rogzarpath/dashboard.dart';
 import 'package:rogzarpath/syllabus_list_screen.dart';
 
@@ -20,6 +21,11 @@ final List<_HomeFeature> features = [
   }),
   _HomeFeature("Daily Quiz", Icons.calendar_today, (context) {
     print("Daily Quiz tapped");
+    Navigator.push(
+  context,
+  MaterialPageRoute(builder: (_) => DailyQuizScreen()),
+);
+  
   }),
   _HomeFeature("PDF Notes", Icons.picture_as_pdf, (context) {
     print("PDF Notes tapped");

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:rogzarpath/Job/job_detail_screen.dart';
 import 'package:rogzarpath/api_service.dart';
@@ -33,14 +34,19 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (isLoading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Latest Govt Jobs'),
+        title:  Text('Latest Government Jobs',style: GoogleFonts.poppins(color: Colors.white,),),
+        backgroundColor: Colors.deepPurple,
         bottom: TabBar(
           controller: tabController,
           isScrollable: true,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          indicatorColor: Colors.white,
+          indicatorWeight: 3,
           tabs: [
             const Tab(text: "All"),
             ...categories.map((cat) => Tab(text: cat['name'])).toList()
@@ -50,7 +56,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
       body: TabBarView(
         controller: tabController,
         children: [
-          JobsListWidget(), // All jobs
+          JobsListWidget(),
           ...categories.map((cat) => JobsListWidget(categoryId: cat['id'])).toList()
         ],
       ),
@@ -109,7 +115,7 @@ class _JobsListWidgetState extends State<JobsListWidget> {
   @override
   Widget build(BuildContext context) {
     if (isLoading) return const Center(child: CircularProgressIndicator());
-    if (jobs.isEmpty) return const Center(child: Text("No jobs found"));
+    if (jobs.isEmpty) return const Center(child: Text("❌ No jobs found", style: TextStyle(fontSize: 16)));
 
     return ListView.builder(
       padding: const EdgeInsets.all(12),
@@ -122,41 +128,55 @@ class _JobsListWidgetState extends State<JobsListWidget> {
         final isFavourite = favouriteJobIds.contains(jobId);
 
         return Card(
-          margin: const EdgeInsets.only(bottom: 12),
-          elevation: 3,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(16),
-            title: Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            subtitle: Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Text("Published: $date"),
-            ),
-            trailing: IconButton(
-              icon: Icon(
-                isFavourite ? Icons.favorite : Icons.favorite_border,
-                color: isFavourite ? Colors.red : Colors.grey,
-              ),
-              onPressed: () => toggleFavourite(jobId),
-            ),
+          elevation: 4,
+          margin: const EdgeInsets.only(bottom: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16),
             onTap: () {
-              print('Job ID: ${job['id']}');
-
               Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (_) => JobDetailScreen(
-      jobId: job['id'],
-    jobTitle: job['title']['rendered'],
-    ),
-  ),
-);
-
-              // TODO: Navigate to job details
+                context,
+                MaterialPageRoute(
+                  builder: (_) => JobDetailScreen(
+                    jobId: job['id'],
+                    jobTitle: job['title']['rendered'],
+                  ),
+                ),
+              );
             },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.date_range, size: 18, color: Colors.grey),
+                      const SizedBox(width: 6),
+                      Text(
+                        "Published: $date",
+                        style: const TextStyle(color: Colors.grey),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: Icon(
+                          isFavourite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavourite ? Colors.red : Colors.grey,
+                        ),
+                        onPressed: () => toggleFavourite(jobId),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
           ),
         );
       },

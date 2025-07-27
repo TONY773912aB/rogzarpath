@@ -95,8 +95,6 @@ void submitTest() async {
 }
 
 
-
-
 Future<Map<String, dynamic>> submitMockTest({
   required int userId,
   required int testId,
@@ -104,7 +102,7 @@ Future<Map<String, dynamic>> submitMockTest({
   required DateTime endTime,
   required List<Map<String, dynamic>> answers, // List of {'question_id': 1, 'selected_option': 'A'}
 }) async {
-  final url = Uri.parse('http://10.161.153.180/rozgarapp/submit_mock_test.php'); // 🔁 Change to your actual URL
+  final url = Uri.parse('https://rozgarpath.vacancygyan.in/submit_mock_test.php'); // 🔁 Change to your actual URL
 
   try {
     final response = await http.post(
