@@ -1,4 +1,5 @@
 // models/mcq_model.dart
+
 class MCQ {
   final String id;
   final String question;
@@ -35,7 +36,24 @@ class MCQ {
       correctOption: json['correct_option'],
       explanation: json['explanation'],
       isBookmarked: json['is_bookmarked'] == 1,
+      selectedOption: json['selected_option'], // optional
     );
+  }
+  
+  
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'question': question,
+      'option_a': optionA,
+      'option_b': optionB,
+      'option_c': optionC,
+      'option_d': optionD,
+      'correct_option': correctOption,
+      'explanation': explanation,
+      'is_bookmarked': isBookmarked ? 1 : 0,
+      'selected_option': selectedOption,
+    };
   }
 }
 

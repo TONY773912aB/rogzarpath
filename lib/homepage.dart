@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rogzarpath/DailyQuizLeaderboard.dart';
+import 'package:rogzarpath/Job/job.dart';
+import 'package:rogzarpath/Mcq/bookmark_question.dart';
+import 'package:rogzarpath/Profile/aboutus.dart';
+import 'package:rogzarpath/Profile/deawer.dart';
 import 'package:rogzarpath/daily_news_screen.dart';
 import 'package:rogzarpath/daily_quiz_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rogzarpath/dashboard.dart';
 import 'package:rogzarpath/syllabus_list_screen.dart';
 
@@ -10,15 +17,7 @@ class HomeScreen extends StatelessWidget {
 
 
 final List<_HomeFeature> features = [
-  _HomeFeature("Govt Jobs", Icons.work_rounded, (context) {
-    print("Govt Jobs tapped");
-  }),
-  _HomeFeature("Practice MCQs", Icons.quiz_rounded, (context) {
-    print("Practice MCQs tapped");
-  }),
-  _HomeFeature("Mock Tests", Icons.assignment_turned_in, (context) {
-    print("Mock Tests tapped");
-  }),
+  
   _HomeFeature("Daily Quiz", Icons.calendar_today, (context) {
     print("Daily Quiz tapped");
     Navigator.push(
@@ -35,11 +34,20 @@ final List<_HomeFeature> features = [
   MaterialPageRoute(builder: (_) => SyllabusListScreen()),
 );
   }),
-  _HomeFeature("Test History", Icons.history_edu, (context) {
-    print("Test History tapped");
+  _HomeFeature("Mock History", Icons.history_edu, (context) {
+    print("Mock History tapped");
+    Navigator.push(
+  context,
+  MaterialPageRoute(builder: (_) => BookmarkPage()),
+);
   }),
   _HomeFeature("Leaderboard", Icons.leaderboard, (context) {
     print("Leaderboard tapped");
+    
+    Navigator.push(
+  context,
+  MaterialPageRoute(builder: (_) => DailyQuizLeaderboardScreen()),
+);
   }),
   _HomeFeature("Current Affairs", Icons.newspaper, (context) {
     print("Current Affairs..........................................");
@@ -50,88 +58,57 @@ final List<_HomeFeature> features = [
 
     print("Notifications tapped");
   }),
-  _HomeFeature("More", Icons.more_horiz, (context) {
-    print("More tapped");
-  }),
+ 
 ];
 
 
   final List<Map<String, String>> sliderData = [
     {
       'image':
-          'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=60',
-      'title': 'UPSC 2025 Preparation',
-      'desc': 'Stay updated with daily quizzes & notes'
+          'assets/banner.png',
+      'title': '',
+      'desc': ''
     },
     {
       'image':
-          'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=60',
-      'title': 'SSC Exams Mock Tests',
-      'desc': 'Practice with real exam pattern tests'
+          'assets/banner.png',
+      'title': '',
+      'desc': ''
     },
-    {
-      'image':
-          'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=60',
-      'title': 'Banking Exam Updates',
-      'desc': 'Get latest IBPS, SBI & RBI notifications'
-    },
+    
   ];
 
+  
   final List<Map<String, dynamic>> menuItems = [
-    {'title': 'Home', 'icon': Icons.home},
-    {'title': 'Bookmarks', 'icon': Icons.bookmark},
-    {'title': 'Downloads', 'icon': Icons.download},
-    {'title': 'Notifications', 'icon': Icons.notifications},
-    {'title': 'Settings', 'icon': Icons.settings},
-    {'title': 'Logout', 'icon': Icons.logout},
+    {'title': 'About us', 'icon': Icons.info},
+    {'title': 'Share', 'icon': Icons.share},
+    {'title': 'Rate This App', 'icon': Icons.star},
+    {'title': 'Disclaimer', 'icon': Icons.notification_add},
+    {'title': 'Privacy Policy', 'icon': Icons.privacy_tip},
+    {'title': 'Terms & Condition', 'icon': Icons.privacy_tip_outlined},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       drawer: Drawer(
-        backgroundColor: Colors.white,
-        child: SafeArea(
-          child: Column(
-            children: [
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.indigo,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      radius: 35,
-                      backgroundImage: AssetImage('assets/avatar.png'),
-                    ),
-                    SizedBox(height: 10),
-                    Text("Welcome, Student",
-                        style: TextStyle(color: Colors.white, fontSize: 18)),
-                  ],
-                ),
-              ),
-              ...menuItems.map((item) {
-                return ListTile(
-                  leading: Icon(item['icon'], color: Colors.indigo),
-                  title: Text(item['title']),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                );
-              }).toList(),
-            ],
-          ),
-        ),
-      ),
+     drawer: CustomDrawer(menuItems: [
+  {'icon': Icons.info, 'title': 'About us', 'type': 'page', 'page': AboutPage()},
+  {'icon': Icons.share, 'title': 'Share', 'type': 'share'},
+  {'icon': Icons.star_rate, 'title': 'Rate This App', 'type': 'url', 'url': 'https://play.google.com/store/apps/details?id=com.rogzarpath.govexam'},
+  {'icon': Icons.security, 'title': 'Disclaimer', 'type': 'url', 'url': 'https://vacancygyan.in/disclaimer-for-rozgarpath/'},
+  {'icon': Icons.privacy_tip, 'title': 'Privacy Policy', 'type': 'url', 'url': 'https://vacancygyan.in/rozgarpath-privacy-policy/'},
+  {'icon': Icons.policy, 'title': 'Terms & Condition', 'type': 'url', 'url': 'https://vacancygyan.in/terms-and-conditions-for-rozgarpath/'},
+])
+,
+    
       appBar: AppBar(
-        title: const Text("RogzarPath"),
+        title:  Text("RogzarPath",style: GoogleFonts.poppins(fontWeight:FontWeight.w600),),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: CircleAvatar(
               backgroundImage: AssetImage('assets/Rozgarpath.png'), // or NetworkImage
-              radius: 18,
+              radius: 28,
             ),
           ),
         ],
@@ -155,12 +132,11 @@ final List<_HomeFeature> features = [
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    item['image']!,
-                    fit: BoxFit.cover,
-                    color: Colors.black.withOpacity(0.4),
-                    colorBlendMode: BlendMode.darken,
-                  ),
+                 Image.asset(
+                item['image']!,
+                fit: BoxFit.fill,
+                width: double.infinity,
+              ),
                   Positioned(
                     bottom: 30,
                     left: 20,
@@ -192,10 +168,10 @@ final List<_HomeFeature> features = [
             );
           },
           options: CarouselOptions(
-            height: 220,
+            height: 240,
             autoPlay: true,
             enlargeCenterPage: true,
-            viewportFraction: 0.85,
+            viewportFraction: 0.98,
             aspectRatio: 16 / 9,
             autoPlayCurve: Curves.fastOutSlowIn,
             enableInfiniteScroll: true,
@@ -204,6 +180,7 @@ final List<_HomeFeature> features = [
         ),
       ),
     SizedBox(height: 20,),
+           
             Expanded(
               child: GridView.builder(
                 itemCount: features.length,
@@ -253,6 +230,8 @@ final List<_HomeFeature> features = [
                 },
               ),
             ),
+          
+          
           ],
         ),
       ),

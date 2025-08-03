@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/MockTest/mock_test_list_screen.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 
 class MockExamList extends StatefulWidget {
   const MockExamList({super.key});
@@ -41,7 +42,7 @@ class _MockExamListState extends State<MockExamList> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Choose Exam',style: GoogleFonts.poppins(color: Colors.white)),
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: MyColors.appbar,
         elevation: 0,
       ),
       body: isLoading

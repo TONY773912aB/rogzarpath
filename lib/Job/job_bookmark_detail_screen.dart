@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 
 class JobBookmarkDetailScreen extends StatelessWidget {
   final Map<String, dynamic> jobData;
@@ -20,11 +22,14 @@ class JobBookmarkDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
+        title:  Text(
           "Job Details",
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(fontWeight: FontWeight.normal,color:Colors.white),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: MyColors.appbar,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -101,53 +106,39 @@ class JobBookmarkDetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // HTML content rendering
-            HtmlWidget(
-              content,
-              textStyle: const TextStyle(fontSize: 16),
-              customStylesBuilder: (element) {
-                switch (element.localName) {
-                  case 'table':
-                    return {
-                      'width': '100%',
-                      'border-collapse': 'collapse',
-                      'background-color': '#f9f9f9',
-                      'border': '1px solid #bbb',
-                    };
-                  case 'th':
-                    return {
-                      'padding': '12px',
-                      'background-color': '#4CAF50',
-                      'color': 'white',
-                      'font-weight': 'bold',
-                      'text-align': 'left',
-                      'border': '1px solid #ccc',
-                    };
-                  case 'td':
-                    return {
-                      'padding': '10px',
-                      'border': '1px solid #ccc',
-                      'font-size': '15px',
-                      'color': '#333',
-                    };
-                  case 'p':
-                    return {
-                      'font-size': '16px',
-                      'color': '#444',
-                      'line-height': '1.6',
-                    };
-                }
-                return null;
+            /// 🔽 HTML content rendering with flutter_html
+            Html(
+              data: content,
+              style: {
+                "body": Style(
+                  fontSize: FontSize(16),
+                  color: Colors.black87,
+                  lineHeight: LineHeight(1.6),
+                ),
+                "table": Style(
+                  backgroundColor: const Color(0xFFF9F9F9),
+                  border: Border.all(color: const Color(0xFFBBBBBB)),
+                ),
+                "th": Style(
+                  padding: HtmlPaddings.all(12),
+                  backgroundColor: Colors.deepPurple.shade300,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  textAlign: TextAlign.left,
+                  border: Border.all(color: const Color(0xFFCCCCCC)),
+                ),
+                "td": Style(
+                  padding: HtmlPaddings.all(10),
+                  border: Border.all(color: const Color(0xFFCCCCCC)),
+                  fontSize: FontSize(15),
+                  color: const Color(0xFF333333),
+                ),
               },
-              onTapUrl: (url) async {
-                final uri = Uri.tryParse(url ?? '');
-                if (uri != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Opening link: $url')),
-                  );
-                }
-                return true;
-              },
+              // onLinkTap: (url, _, __, ___) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(content: Text('Opening link: $url')),
+              //   );
+              // },
             ),
           ],
         ),

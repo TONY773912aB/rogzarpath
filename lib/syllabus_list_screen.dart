@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/api_service.dart';
 import 'package:rogzarpath/constant/model.dart';
 import 'pdf_viewer_screen.dart';
@@ -24,13 +25,16 @@ class _SyllabusListScreenState extends State<SyllabusListScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
-        title: const Text(
+        iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
+        title:  Text(
           "📚 Exam Syllabus PDFs",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.w600,
             fontSize: 20,
             color: Colors.white,
-            fontFamily: 'Roboto',
+            
           ),
         ),
         centerTitle: true,

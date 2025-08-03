@@ -59,10 +59,16 @@ void saveLoginStatus() async {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.school_rounded, size: 90, color: Colors.white),
+                Padding(
+            padding: const EdgeInsets.only(right: 1),
+            child: CircleAvatar(
+              backgroundImage: AssetImage('assets/Rozgarpath.png'), // or NetworkImage
+              radius: 60,
+            ),
+          ),
                 const SizedBox(height: 20),
                 const Text(
-                  "Welcome to RogzarPath",
+                  "Welcome to Rozgarpath",
                   style: TextStyle(fontSize: 26, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),

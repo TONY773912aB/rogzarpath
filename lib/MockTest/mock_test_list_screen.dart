@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:rogzarpath/constant/model.dart';
 import 'mock_test_screen.dart';
 
@@ -27,20 +28,14 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
+         iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
         title: Text(
           widget.examName,
           style: GoogleFonts.poppins(color: Colors.white)
         ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.deepPurple, Colors.indigo],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+        backgroundColor: MyColors.appbar,
         centerTitle: true,
       ),
       body: FutureBuilder<List<MockTest>>(

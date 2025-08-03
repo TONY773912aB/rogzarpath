@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/Mcq/mcq_screen.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:rogzarpath/constant/model.dart';
 
 class SubjectScreen extends StatefulWidget {
@@ -46,9 +48,12 @@ class _SubjectScreenState extends State<SubjectScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.examName} Subjects'),
-        backgroundColor: Colors.deepPurple,
+        title: Text('${widget.examName} Subjects',style: GoogleFonts.poppins(color:Colors.white),),
+        backgroundColor: MyColors.appbar,
         elevation: 0,
+        iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())

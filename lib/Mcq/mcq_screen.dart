@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:rogzarpath/Mcq/bookmark_service.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:rogzarpath/constant/model.dart';
 
 class MCQScreen extends StatefulWidget {
@@ -60,10 +63,20 @@ class _MCQScreenState extends State<MCQScreen> {
     setState(() => isLoading = false);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
+  
+  
+  void toggleBookmark(int index) async {
+  setState(() {
+    mcqs[index].isBookmarked = !mcqs[index].isBookmarked;
+  });
 
-  void toggleBookmark(int index) {
-    setState(() => mcqs[index].isBookmarked = !mcqs[index].isBookmarked);
+  if (mcqs[index].isBookmarked) {
+    await BookmarkService.addBookmark(mcqs[index]);
+  } else {
+    await BookmarkService.removeBookmark(mcqs[index].question);
   }
+}
+
 
   void selectOption(String label) {
     if (mcqs[currentIndex].selectedOption != null) return;
@@ -200,9 +213,12 @@ class _MCQScreenState extends State<MCQScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: MyColors.appbar,
         elevation: 2,
-        title: Text(widget.subjectName, style: const TextStyle(fontWeight: FontWeight.w600)),
+        iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
+        title: Text(widget.subjectName, style: GoogleFonts.poppins(color:Colors.white),),
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())

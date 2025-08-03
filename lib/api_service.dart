@@ -1,5 +1,7 @@
 // lib/services/api_service.dart
 import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:rogzarpath/constant/model.dart';
 
@@ -12,12 +14,12 @@ class ApiService {
    /// Fetch list of exams
   static Future<List<dynamic>> getExams() async {
     final url = Uri.parse("${appUrl}get_exams.php");
-
+    
     try {
       final response = await http.get(url);
       final data = jsonDecode(response.body);
       
-
+      
       if (data['status']) {
         return data['data'];
       } else {
@@ -35,41 +37,56 @@ class ApiService {
   required int correct,
   required int wrong,
 }) async {
-  final url = Uri.parse('$baseUrl/save_daily_quiz.php'); // Replace with your actual path
+  final url = Uri.parse('${appUrl}submit_daily_quiz.php'); // Replace with your actual path
 
-  final response = await http.post(url, body: {
+  final response = await http.post(url, body: {   
     'user_id': userId.toString(),
     'total_questions': totalQuestions.toString(),
     'attempted': attempted.toString(),
     'correct': correct.toString(),
     'wrong': wrong.toString(),
   });
-
+   print(response);
+   print(response.statusCode);
   if (response.statusCode == 200) {
     final result = jsonDecode(response.body);
+    Fluttertoast.showToast(
+  msg: "🎉 Quiz Submitted Successfully!",
+  toastLength: Toast.LENGTH_SHORT,
+  gravity: ToastGravity.BOTTOM,
+  backgroundColor: Colors.green[600],
+  textColor: Colors.white,
+  fontSize: 16.0,
+);
+
     return result['status'] == true;
   } else {
+      print('Failed to submit daily quiz');
     throw Exception('Failed to submit daily quiz');
   }
 }
 
 
    static Future<List<DailyQuizQuestion>> fetchDailyQuiz() async {
-  final response = await http.get(Uri.parse("http://10.161.153.180/rozgarapp/fetch_daily_quiz.php"));
+  final response = await http.get(Uri.parse("${appUrl}fetch_daily_quiz.php"));
 
   if (response.statusCode == 200) {
     final data = json.decode(response.body);
+    print(response);
     if (data['status'] == 'success') {
       List questions = data['questions'];
       return questions.map((q) => DailyQuizQuestion.fromJson(q)).toList();
     } else {
+      print("No quiz available today");
       throw Exception("No quiz available today");
     }
   } else {
+    print("Failed to load quiz");
     throw Exception("Failed to load quiz");
   }
 }
-   
+
+
  
 static Future<List<dynamic>> getSubjects(String examId) async {
   final url = Uri.parse('${appUrl}get_subjects.php');

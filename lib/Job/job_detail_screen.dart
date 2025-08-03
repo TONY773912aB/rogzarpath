@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:shimmer/shimmer.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:flutter_html/flutter_html.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../api_service.dart';
@@ -72,32 +71,91 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     }
   }
 
-  void shareJob() {
-    final link = job?['link'] ?? '';
-    Share.share('Check out this job opportunity:\n$link');
-  }
   Future<bool> onTapUrl(BuildContext context, String? url) async {
-  try {
-    final uri = Uri.tryParse(url ?? '');
+    if (url == null) return false;
+    final uri = Uri.tryParse(url);
     if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+      return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Could not open the link")),
+        const SnackBar(content: Text('Could not open link')),
       );
+      return false;
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error opening link: $e")),
+  }
+
+
+
+  Widget buildHtmlContent(String? htmlContent) {
+    return Html(
+      data: htmlContent ?? "",
+     /// extensions: const [TableHtmlExtension()],
+     
+      onLinkTap: (url, attributes, element) => onTapUrl(context, url),
+      style: {
+        "html": Style(fontSize: FontSize(16.0)),
+        "table": Style(
+          backgroundColor: Colors.white,
+          border: Border.all(color: Colors.black),
+          padding: HtmlPaddings.all(8),
+        ),
+        "th": Style(
+          backgroundColor: Colors.indigo,
+          color: Colors.white,
+          padding: HtmlPaddings.all(10),
+          fontWeight: FontWeight.w600,
+        ),
+        "td": Style(
+          padding: HtmlPaddings.all(10),
+          border: Border.all(color: Colors.grey.shade300),
+          fontSize: FontSize(15),
+          color: Colors.black87,
+        ),
+        "tr": Style(
+          border: Border(bottom: BorderSide(color: Colors.grey.shade300)),
+        ),
+        "h1": Style(
+          fontSize: FontSize(24),
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF2c3e50),
+        ),
+        "h2": Style(
+          fontSize: FontSize(22),
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF2c3e50),
+        ),
+        "h3": Style(
+          fontSize: FontSize(20),
+          fontWeight: FontWeight.bold,
+          color: const Color(0xFF34495e),
+        ),
+        "p": Style(
+          fontSize: FontSize(16),
+          color: const Color(0xFF444444),
+          lineHeight: LineHeight(1.6),
+        ),
+        "ul": Style(
+          padding: HtmlPaddings.only(left: 20),
+          fontSize: FontSize(16),
+        ),
+        "ol": Style(
+          padding: HtmlPaddings.only(left: 20),
+          fontSize: FontSize(16),
+        ),
+        "li": Style(
+          margin: Margins.only(bottom: 8),
+        ),
+      },
     );
   }
-  return true;
-}
+
 
 
   @override
   Widget build(BuildContext context) {
-    final mediaUrl = job?['jetpack_featured_media_url'] ?? job?['better_featured_image']?['source_url'];
+    final mediaUrl = job?['jetpack_featured_media_url'] ??
+        job?['better_featured_image']?['source_url'];
 
     return Scaffold(
       appBar: AppBar(
@@ -108,53 +166,46 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
         ),
         actions: [
-          // IconButton(
-          //   icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-          //   onPressed: toggleFavorite,
-          //   tooltip: isFavorite ? 'Remove from favorites' : 'Add to favorites',
-          // ),
           IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: shareJob,
-            tooltip: 'Share job',
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: Colors.red,
+            ),
+            onPressed: toggleFavorite,
+            tooltip: isFavorite ? 'Remove from Favorites' : 'Add to Favorites',
           ),
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (mediaUrl != null && mediaUrl.isNotEmpty)
-  Padding(
-    padding: const EdgeInsets.symmetric(vertical: 12.0),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        mediaUrl,
-        width: double.infinity,
-        height: 200,
-        fit: BoxFit.cover,
-        loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) return child;
-          return Container(
-            width: double.infinity,
-            height: 200,
-            color: Colors.grey[200],
-            child: const Center(child: CircularProgressIndicator()),
-          );
-        },
-        errorBuilder: (context, error, stackTrace) => Container(
-          width: double.infinity,
-          height: 200,
-          color: Colors.grey[300],
-          child: const Icon(Icons.broken_image, size: 40),
-        ),
-      ),
-    ),
-  ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.network(
+                        mediaUrl,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Container(
+                            height: 200,
+                            color: Colors.grey[200],
+                            child: const Center(child: CircularProgressIndicator()),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          height: 200,
+                          color: Colors.grey[300],
+                          child: const Icon(Icons.broken_image, size: 40),
+                        ),
+                      ),
+                    ),
                   const SizedBox(height: 20),
                   Text(
                     job!['title']['rendered'],
@@ -163,108 +214,22 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           color: Colors.indigo.shade900,
                         ),
                   ),
-                  const SizedBox(height: 12),
-                  Divider(color: Colors.indigo.shade100),
-                  HtmlWidget(
-                    job!['content']['rendered'],
-                    textStyle: const TextStyle(fontSize: 16),
-                 // onTapUrl: (url) => onTapUrl(context, url)
-                 onTapUrl: (url) async {
-  print("Tapped URL: $url"); // <-- Add this line
-  if (url == null || url.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Invalid URL")),
-    );
-    return true;
-  }
-
-  try {
-    final uri = Uri.tryParse(url);
-    if (uri != null && await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Could not open the link")),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Error opening link: $e")),
-    );
-  }
-  return true;
-}
-
-,
-                    customStylesBuilder: (element) {
-                      switch (element.localName) {
-                        case 'table':
-                          return {
-                            'width': '100%',
-                            'border-collapse': 'collapse',
-                            'background-color': '#f9f9f9',
-                            'border': '1px solid #bbb',
-                          };
-                        case 'thead':
-                          return {'background-color': '#e0e0e0'};
-                        case 'tr':
-                          return {
-                            'border-bottom': '1px solid #ddd',
-                          };
-                        case 'th':
-                          return {
-                            'padding': '12px',
-                            'background-color': '#4CAF50',
-                            'color': 'white',
-                            'font-weight': 'bold',
-                            'text-align': 'left',
-                            'border': '1px solid #ccc',
-                          };
-                        case 'td':
-                          return {
-                            'padding': '10px',
-                            'border': '1px solid #ccc',
-                            'text-align': 'left',
-                            'font-size': '15px',
-                            'color': '#333',
-                          };
-                        case 'h1':
-                          return {
-                            'font-size': '24px',
-                            'font-weight': 'bold',
-                            'color': '#2c3e50',
-                          };
-                        case 'h2':
-                          return {             
-                            'font-size': '22px',
-                            'font-weight': 'bold',
-                            'color': '#2c3e50',
-                          };
-                        case 'h3':
-                          return {
-                            'font-size': '20px',
-                            'font-weight': 'bold',
-                            'color': '#34495e',
-                          };
-                        case 'p':
-                          return {
-                            'font-size': '16px',
-                            'color': '#444',
-                            'line-height': '1.6',
-                          };
-                        case 'ul':
-                        case 'ol':
-                          return {
-                            'padding-left': '20px',
-                            'font-size': '16px',
-                          };
-                        case 'li':
-                          return {
-                            'margin-bottom': '8px',
-                          };
-                      }
-                      return null;
-                    },
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: buildHtmlContent(job?['content']['rendered']),
                   ),
                 ],
               ),

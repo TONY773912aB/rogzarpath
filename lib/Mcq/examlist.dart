@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/Mcq/subject_screen.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 
 class ExamScreen extends StatefulWidget {
   @override
@@ -39,8 +41,8 @@ class _ExamScreenState extends State<ExamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Exam'),
-        backgroundColor: Colors.deepPurpleAccent,
+        title: Text('Choose Exam',style: GoogleFonts.poppins(color:Colors.white),),
+        backgroundColor: MyColors.appbar,
         elevation: 0,
       ),
       body: isLoading
@@ -48,7 +50,7 @@ class _ExamScreenState extends State<ExamScreen> {
           : errorMessage.isNotEmpty
               ? Center(child: Text(errorMessage))
               : Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(15.0),
                   child: GridView.builder(
                     itemCount: exams.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -95,7 +97,7 @@ class _ExamScreenState extends State<ExamScreen> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Icon(Icons.menu_book_rounded,
-                                      size: 40, color: Colors.white),
+                                      size: 45, color: Colors.white),
                                   SizedBox(height: 12),
                                   Text(
                                     exam['name'],

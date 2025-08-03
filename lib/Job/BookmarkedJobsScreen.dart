@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:rogzarpath/api_service.dart';
 import 'job_bookmark_detail_screen.dart';
@@ -64,9 +66,12 @@ class _BookmarkedJobsScreenState extends State<BookmarkedJobsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Bookmarked Jobs"),
-        backgroundColor: Colors.deepPurple,
+        title: Text("Bookmarked Jobs",style: GoogleFonts.poppins(color: Colors.white,),),
+        backgroundColor: MyColors.appbar,
         centerTitle: true,
+        iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
         elevation: 4,
       ),
       body: ListView.builder(

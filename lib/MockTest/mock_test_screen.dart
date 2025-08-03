@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/api_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:rogzarpath/constant/model.dart';
 import 'mock_test_result_screen.dart';
 
@@ -178,13 +180,11 @@ Future<Map<String, dynamic>> submitMockTest({
 
     return Scaffold(
       appBar: AppBar(
-      
-        title: Text("Mock Test", style: TextStyle(color: Colors.white),),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [Colors.deepPurple, Colors.indigo]),
-          ),
-        ),
+       iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
+        title: Text("Mock Test", style: GoogleFonts.poppins(color: Colors.white),),
+        backgroundColor: MyColors.appbar,
         actions: [
           Padding(
             padding: const EdgeInsets.all(10),

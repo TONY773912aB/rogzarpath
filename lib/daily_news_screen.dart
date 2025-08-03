@@ -37,7 +37,10 @@ void _toggleLanguage(bool value) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text("Daily Current Affairs"),
+        iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
+        title: Text("Daily Current Affairs",style: GoogleFonts.poppins(color:Colors.white),),
        leading: IconButton(
     icon: Icon(Icons.arrow_back), // or Icons.arrow_back_ios
     onPressed: () {

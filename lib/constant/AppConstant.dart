@@ -8,6 +8,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
+
+
+
+class MyColors {
+  //static Color buttonolor = Colors.blue[700]!;
+  static Color appbar = Colors.deepPurple;
+  static Color buttonolor1 = Color.fromARGB(255, 30, 86, 198);
+  static Color greenolor = Color(0xFF09B98A);
+
+  //static const Color primaryColorblue = Color(#2962FF);
+}
+
 TextStyle drawerTextStyle = GoogleFonts.poppins(
   fontSize: 16,
   color: Colors.black,
