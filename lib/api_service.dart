@@ -8,8 +8,8 @@ import 'package:rogzarpath/constant/model.dart';
 class ApiService {  
 
   static const String baseUrl = 'https://vacancygyan.in/wp-json/wp/v2';
-  //static const String appUrl = 'http://10.161.153.180/rozgarapp/';
-  static const String appUrl = 'https://rozgarpath.vacancygyan.in/';
+  static const String appUrl = 'http://10.161.153.180/rozgarapp/';
+  //static const String appUrl = 'https://rozgarpath.vacancygyan.in/';
   
    /// Fetch list of exams
   static Future<List<dynamic>> getExams() async {
@@ -20,7 +20,7 @@ class ApiService {
       final data = jsonDecode(response.body);
       
       
-      if (data['status']) {
+      if (data['status']) { 
         return data['data'];
       } else {
         throw Exception('No exams found.');
@@ -29,6 +29,7 @@ class ApiService {
       throw Exception('Error fetching exams: $e');
     }
   }
+
 
   static Future<bool> submitDailyQuiz({
   required int userId,
@@ -173,8 +174,8 @@ static Future<List<SyllabusPDF>> fetchSyllabusPDFs() async {
 }
 
 class MockTestService {
-  //static const baseUrl = 'http://10.161.153.180/rozgarapp/';
-  static const String baseUrl = 'https://rozgarpath.vacancygyan.in/';
+  static const baseUrl = 'http://10.161.153.180/rozgarapp/';
+  //static const String baseUrl = 'https://rozgarpath.vacancygyan.in/';
 
 static Future<List<MockTest>> getTests(int examId) async {
   final response = await http.post(

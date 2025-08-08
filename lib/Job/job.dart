@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:rogzarpath/Job/job_detail_screen.dart';
@@ -47,6 +48,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
           indicatorWeight: 3,
+        labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
           tabs: [
             const Tab(text: "All"),
             ...categories.map((cat) => Tab(text: cat['name'])).toList()

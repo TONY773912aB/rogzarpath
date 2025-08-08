@@ -31,6 +31,7 @@ class JobBookmarkDetailScreen extends StatelessWidget {
         ),
         backgroundColor: MyColors.appbar,
         centerTitle: true,
+        
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),

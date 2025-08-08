@@ -6,6 +6,7 @@ import 'package:rogzarpath/Job/job.dart';
 import 'package:rogzarpath/Mcq/bookmark_question.dart';
 import 'package:rogzarpath/Profile/aboutus.dart';
 import 'package:rogzarpath/Profile/deawer.dart';
+import 'package:rogzarpath/currentaffair/currentaffairtab.dart';
 import 'package:rogzarpath/daily_news_screen.dart';
 import 'package:rogzarpath/daily_quiz_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -53,7 +54,7 @@ final List<_HomeFeature> features = [
     print("Current Affairs..........................................");
     Navigator.push(
   context,
-  MaterialPageRoute(builder: (_) => DailyNewsScreen()),
+  MaterialPageRoute(builder: (_) => HomeTabs()),
 );
 
     print("Notifications tapped");

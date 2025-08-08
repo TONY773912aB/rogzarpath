@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'news_service.dart';
 
@@ -37,28 +38,25 @@ void _toggleLanguage(bool value) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
+         elevation: 0,
+         //backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(
     color: Colors.white, // Change this to your desired color
   ),
-        title: Text("Daily Current Affairs",style: GoogleFonts.poppins(color:Colors.white),),
-       leading: IconButton(
-    icon: Icon(Icons.arrow_back), // or Icons.arrow_back_ios
-    onPressed: () {
-      Navigator.pop(context); // 👈 goes back to the previous screen
-    },
-  ),
-        backgroundColor: Colors.deepPurple,
+       
+        //backgroundColor: Colors.deepPurple,
         actions: [
           Row(
             children: [
-              Text("EN", style: TextStyle(color: Colors.white)),
+              Text("EN", style: TextStyle(color: Colors.black)),
               Switch(
+                activeTrackColor: Colors.black,
                 value: isHindi,
                 onChanged: _toggleLanguage,
                 activeColor: Colors.white,
                 inactiveThumbColor: Colors.grey,
               ),
-              Text("हिंदी", style: TextStyle(color: Colors.white)),
+              Text("हिंदी", style: TextStyle(color: Colors.black)),
               SizedBox(width: 8),
             ],
           )

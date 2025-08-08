@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -159,11 +161,15 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
+         iconTheme: IconThemeData(
+    color: Colors.white, // Change this to your desired color
+  ),
+        backgroundColor: MyColors.appbar,
         title: Text(
           widget.jobTitle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
+          style: GoogleFonts.poppins(color:Colors.white),
         ),
         actions: [
           IconButton(

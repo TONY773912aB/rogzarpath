@@ -46,7 +46,7 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
     int wrong = attempted - correct;
 
     bool success = await ApiService.submitDailyQuiz(
-      userId: 8,
+      userId: 3,
       totalQuestions: total,
       attempted: attempted,
       correct: correct,
