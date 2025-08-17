@@ -42,7 +42,8 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
         if (_selectedAnswers[q.id] == q.correctAns) correct++;
       }
     }
-
+    
+    
     int wrong = attempted - correct;
 
     bool success = await ApiService.submitDailyQuiz(

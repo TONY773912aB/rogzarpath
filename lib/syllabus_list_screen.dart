@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/AppConstant.dart';
 import 'package:rogzarpath/constant/model.dart';
 import 'pdf_viewer_screen.dart';
 
@@ -38,15 +39,7 @@ class _SyllabusListScreenState extends State<SyllabusListScreen> {
           ),
         ),
         centerTitle: true,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF6A1B9A), Color(0xFF8E24AA)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+      backgroundColor: MyColors.appbar,
         elevation: 0,
       ),
       body: FutureBuilder<List<SyllabusPDF>>(

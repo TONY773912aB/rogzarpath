@@ -162,11 +162,20 @@ class SyllabusPDF {
 
   factory SyllabusPDF.fromJson(Map<String, dynamic> json) {
     return SyllabusPDF(
-      id: json['id'],
-      examName: json['exam_name'],
-      pdfTitle: json['pdf_title'],
-      pdfUrl: json['pdf_url'],
+      id: json['id']?.toString() ?? '',
+      examName: json['exam_name'] ?? '',
+      pdfTitle: json['pdf_title'] ?? '',
+      pdfUrl: json['pdf_url'] ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'exam_name': examName,
+      'pdf_title': pdfTitle,
+      'pdf_url': pdfUrl,
+    };
   }
 }
 
