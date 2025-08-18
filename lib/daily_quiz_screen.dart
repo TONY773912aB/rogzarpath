@@ -47,13 +47,14 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
     int wrong = attempted - correct;
 
     bool success = await ApiService.submitDailyQuiz(
-      userId: 3,
+      userId: UserTable.googleId,
       totalQuestions: total,
       attempted: attempted,
       correct: correct,
       wrong: wrong,
     );
-
+    print("print ....................");
+    print(success);
    showDialog(
   context: context,
   barrierDismissible: false,

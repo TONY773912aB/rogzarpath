@@ -32,7 +32,7 @@ class ApiService {
 
 
   static Future<bool> submitDailyQuiz({
-  required int userId,
+  required String userId,
   required int totalQuestions,
   required int attempted,
   required int correct,
@@ -41,7 +41,7 @@ class ApiService {
   final url = Uri.parse('${appUrl}submit_daily_quiz.php'); // Replace with your actual path
 
   final response = await http.post(url, body: {   
-    'user_id': userId.toString(),
+    'user_id': UserTable.googleId,
     'total_questions': totalQuestions.toString(),
     'attempted': attempted.toString(),
     'correct': correct.toString(),
@@ -49,6 +49,7 @@ class ApiService {
   });
    print(response);
    print(response.statusCode);
+  print( UserTable.googleId);
   if (response.statusCode == 200) {
     final result = jsonDecode(response.body);
     Fluttertoast.showToast(
@@ -61,8 +62,10 @@ class ApiService {
 );
 
     return result['status'] == true;
+    
   } else {
       print('Failed to submit daily quiz');
+      
     throw Exception('Failed to submit daily quiz');
   }
 }

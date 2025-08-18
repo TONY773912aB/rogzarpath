@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
     if (isLoggedIn) {
-      String googleId = prefs.getString('googleId') ?? "";
+      String googleId = prefs.getString('uid') ?? "";
       String name = prefs.getString('name') ?? "";
       String email = prefs.getString('email') ?? "";
       String photoUrl = prefs.getString('photoUrl') ?? "";

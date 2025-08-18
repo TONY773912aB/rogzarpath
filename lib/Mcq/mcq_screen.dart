@@ -182,6 +182,9 @@ class _MCQScreenState extends State<MCQScreen> {
     );
 
     final data = jsonDecode(response.body);
+    print("data print............");
+    print(data);
+    print(data['status']);
     if (data['status']) {
       showDialog(
         context: context,
@@ -304,7 +307,17 @@ class _MCQScreenState extends State<MCQScreen> {
                               if (currentIndex < mcqs.length - 1) {
                                 setState(() => currentIndex++);
                               } else {
-                                submitAttempts();
+                               
+                               if(UserTable.googleId=="" ||UserTable.googleId==null ||UserTable.googleId=="null" ){
+                                print("User ID is Null/Empty............");
+                                print(UserTable.googleId);
+                                
+                               }else{
+                                print("User ID is Not Null/Empty............");
+                                print(UserTable.googleId);
+submitAttempts();
+                               }
+                                
                               }
                             },
                             child: AnimatedContainer(

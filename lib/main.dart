@@ -39,6 +39,7 @@ void _showNotification(RemoteMessage message) {
   );
 }
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

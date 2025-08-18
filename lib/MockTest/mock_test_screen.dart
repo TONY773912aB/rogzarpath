@@ -66,18 +66,17 @@ void submitTest() async {
   // Set end time
   final DateTime endTime = DateTime.now();
 
-  // You can replace this with dynamic user ID
-  final int userId = 1; // 🔁 Change this if using auth or SharedPreferences
-
   // Submit to server
+  
   final result = await submitMockTest(
-    userId: userId,
+    userId: UserTable.googleId,
     testId: widget.test.id,
     startTime: startTime,
     endTime: endTime,
     answers: answers,
   );
-
+  print("userid printed....................");
+  print(UserTable.googleId);
   // Handle result
   if (result['success']) {
     Navigator.pushReplacement(
@@ -98,7 +97,7 @@ void submitTest() async {
 
 
 Future<Map<String, dynamic>> submitMockTest({
-  required int userId,
+  required String userId,
   required int testId,
   required DateTime startTime,
   required DateTime endTime,
@@ -111,7 +110,7 @@ Future<Map<String, dynamic>> submitMockTest({
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
-        'user_id': userId,
+        'user_id': UserTable.googleId,
         'test_id': testId,
         'start_time': startTime.toIso8601String().substring(0, 19).replaceFirst('T', ' '),
         'end_time': endTime.toIso8601String().substring(0, 19).replaceFirst('T', ' '),
