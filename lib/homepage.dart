@@ -243,8 +243,8 @@ final List<_HomeFeature> features = [
     itemCount: features.length,
     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 3,
-      mainAxisSpacing: 20,
-      crossAxisSpacing: 20,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
       childAspectRatio: 0.9,
     ),
     itemBuilder: (context, index) {
@@ -293,13 +293,13 @@ final List<_HomeFeature> features = [
                     color: Colors.deepPurple.shade700,
                   ),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 10),
                 Text(
                   feature.label,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                    fontSize: 13,
                     color: Colors.white,
                     letterSpacing: 0.5,
                   ),

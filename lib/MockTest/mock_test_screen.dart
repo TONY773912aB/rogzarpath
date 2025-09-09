@@ -18,9 +18,9 @@ class MockTestScreen extends StatefulWidget {
 
 class _MockTestScreenState extends State<MockTestScreen> {
   List<MockQuestion> questions = [];
-  Map<int, String> userAnswers = {}; // questionId -> selected option
-  Set<int> visitedQuestions = {}; // track visited questions
-  Set<int> markedForReview = {}; // track marked questions
+  Map<int, String> userAnswers = {};
+  Set<int> visitedQuestions = {};
+  Set<int> markedForReview = {};
   int currentIndex = 0;
   late Timer _timer;
   int secondsLeft = 0;
@@ -42,7 +42,7 @@ class _MockTestScreenState extends State<MockTestScreen> {
   }
 
   void startTimer() {
-    _timer = Timer.periodic(Duration(seconds: 1), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!isPaused) {
         setState(() {
           secondsLeft--;
@@ -107,8 +107,14 @@ class _MockTestScreenState extends State<MockTestScreen> {
         body: jsonEncode({
           'user_id': UserTable.googleId,
           'test_id': testId,
-          'start_time': startTime.toIso8601String().substring(0, 19).replaceFirst('T', ' '),
-          'end_time': endTime.toIso8601String().substring(0, 19).replaceFirst('T', ' '),
+          'start_time': startTime
+              .toIso8601String()
+              .substring(0, 19)
+              .replaceFirst('T', ' '),
+          'end_time': endTime
+              .toIso8601String()
+              .substring(0, 19)
+              .replaceFirst('T', ' '),
           'answers': answers,
         }),
       );
@@ -141,38 +147,100 @@ class _MockTestScreenState extends State<MockTestScreen> {
     super.dispose();
   }
 
+  // ✅ Custom Option Tile (Modern Button Style)
   Widget buildOptionTile(String option, String text, int qid) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: RadioListTile<String>(
-        activeColor: Colors.deepPurple,
-        value: option,
-        groupValue: userAnswers[qid],
-        onChanged: (val) {
-          setState(() => userAnswers[qid] = val!);
-        },
-        title: Text(text, style: TextStyle(fontSize: 16)),
+    bool isSelected = userAnswers[qid] == option;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          userAnswers[qid] = option;
+        });
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [Colors.deepPurple, Colors.purpleAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : const LinearGradient(
+                  colors: [Colors.white, Colors.white],
+                ),
+          border: Border.all(
+            color: isSelected ? Colors.deepPurple : Colors.grey.shade300,
+            width: 2,
+          ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: Colors.deepPurple.withOpacity(0.4),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              )
+          ],
+        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundColor:
+                  isSelected ? Colors.white : Colors.deepPurple.shade100,
+              child: Text(
+                option,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? Colors.deepPurple : Colors.black87,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                text,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                  color: isSelected ? Colors.white : Colors.black87,
+                ),
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: Colors.white, size: 20),
+          ],
+        ),
       ),
     );
   }
 
-  // ✅ Build Question Palette Modal
+  // ✅ Question Palette
   void showQuestionPalette() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (_) {
         return Container(
           padding: const EdgeInsets.all(16),
           height: MediaQuery.of(context).size.height * 0.8,
           child: Column(
             children: [
-              Text("Question Palette", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text("Question Palette",
+                  style: GoogleFonts.poppins(
+                      fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
               Expanded(
                 child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 6,
                     mainAxisSpacing: 8,
                     crossAxisSpacing: 8,
@@ -181,16 +249,15 @@ class _MockTestScreenState extends State<MockTestScreen> {
                   itemBuilder: (context, index) {
                     int qid = questions[index].id;
 
-                    // Decide color
                     Color bgColor = Colors.grey;
                     if (userAnswers.containsKey(qid)) {
-                      bgColor = Colors.green; // Answered
+                      bgColor = Colors.green;
                     }
                     if (markedForReview.contains(qid)) {
-                      bgColor = Colors.blue; // Marked
+                      bgColor = Colors.blue;
                     }
                     if (!visitedQuestions.contains(qid)) {
-                      bgColor = Colors.grey; // Not visited
+                      bgColor = Colors.grey.shade400;
                     }
 
                     return InkWell(
@@ -207,7 +274,10 @@ class _MockTestScreenState extends State<MockTestScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         alignment: Alignment.center,
-                        child: Text("${index + 1}", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        child: Text("${index + 1}",
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
                       ),
                     );
                   },
@@ -222,17 +292,20 @@ class _MockTestScreenState extends State<MockTestScreen> {
                   legendBox(Colors.red, "Not Answered"),
                   legendBox(Colors.green, "Answered"),
                   legendBox(Colors.blue, "Marked"),
-                  legendBox(Colors.purple, "Answered & Marked"),
                 ],
               ),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: submitTest,
-                child: Text("Submit Test"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                 ),
+                child: const Text("Submit Test",
+                    style: TextStyle(color: Colors.white)),
               )
             ],
           ),
@@ -255,8 +328,9 @@ class _MockTestScreenState extends State<MockTestScreen> {
   @override
   Widget build(BuildContext context) {
     if (questions.isEmpty) {
-      return Scaffold(
-        body: Center(child: CircularProgressIndicator(color: Colors.deepPurple)),
+      return const Scaffold(
+        body: Center(
+            child: CircularProgressIndicator(color: Colors.deepPurple)),
       );
     }
 
@@ -265,24 +339,35 @@ class _MockTestScreenState extends State<MockTestScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        title: Text("Mock Test", style: GoogleFonts.poppins(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text("Mock Test",
+            style: GoogleFonts.poppins(color: Colors.white)),
         backgroundColor: MyColors.appbar,
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
             child: Chip(
               backgroundColor: Colors.white,
+              shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(10)),
               label: Text(
                 "${secondsLeft ~/ 60}:${(secondsLeft % 60).toString().padLeft(2, '0')}",
-                style: TextStyle(color: Colors.deepPurple, fontWeight: FontWeight.bold),
+                style:  GoogleFonts.poppins(
+                    color: Colors.deepPurple, fontWeight: FontWeight.bold),
               ),
             ),
           ),
           IconButton(
-            icon: Icon(isPaused ? Icons.play_arrow : Icons.pause, color: Colors.white),
+            icon: Icon(isPaused ? Icons.play_arrow : Icons.pause,
+                color: Colors.white),
             tooltip: isPaused ? "Resume Test" : "Pause Test",
             onPressed: () => setState(() => isPaused = !isPaused),
+          ),
+
+           IconButton(
+            icon: Icon(Icons.dashboard,
+                color: Colors.white),
+            
+            onPressed: showQuestionPalette,
           ),
         ],
       ),
@@ -294,20 +379,39 @@ class _MockTestScreenState extends State<MockTestScreen> {
             // Question Box
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.deepPurple.shade50,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [BoxShadow(blurRadius: 6, color: Colors.black12)],
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.deepPurple.shade400,
+                    Colors.deepPurple.shade200
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.deepPurple.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Q${currentIndex + 1}/${questions.length}",
-                      style: TextStyle(fontSize: 16, color: Colors.deepPurple)),
-                  const SizedBox(height: 8),
+                      style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white)),
+                  const SizedBox(height: 10),
                   Text(q.question,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                      style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white)),
                 ],
               ),
             ),
@@ -326,23 +430,39 @@ class _MockTestScreenState extends State<MockTestScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (currentIndex > 0)
-                  ElevatedButton(
+                  ElevatedButton.icon(
                     onPressed: () => setState(() => currentIndex--),
-                    child: Text("⟵ Previous", style: TextStyle(color: Colors.white)),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    label:  Text("Previous",style:  GoogleFonts.poppins(color: Colors.white),),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[800],
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                      backgroundColor: Colors.grey[700],
+                      
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
                     ),
                   ),
-                ElevatedButton(
+                ElevatedButton.icon(
                   onPressed: currentIndex < questions.length - 1
                       ? () => setState(() => currentIndex++)
                       : submitTest,
-                  child: Text(currentIndex < questions.length - 1 ? "Next ⟶" : "Submit ✅",
-                      style: TextStyle(color: Colors.white)),
+                  icon: Icon(
+                    currentIndex < questions.length - 1
+                        ? Icons.arrow_forward
+                        : Icons.check,
+                    color: Colors.white,
+                  ),
+                  label: Text(
+                    currentIndex < questions.length - 1 ? "Next" : "Submit",
+                    style:  GoogleFonts.poppins(color: Colors.white),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                   ),
                 ),
               ],
@@ -350,13 +470,14 @@ class _MockTestScreenState extends State<MockTestScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-  onPressed: showQuestionPalette,
-  backgroundColor: Colors.deepPurple,
-  child: Icon(Icons.grid_view, color: Colors.white),
-),
-
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: showQuestionPalette,
+      //   backgroundColor: Colors.deepPurple,
+      //   child: const Icon(Icons.grid_view, color: Colors.white),
+      //   elevation: 6,
+      //   shape:
+      //       RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      // ),
     );
   }
 }
-

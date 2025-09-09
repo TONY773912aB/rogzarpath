@@ -27,13 +27,16 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-         iconTheme: IconThemeData(
-    color: Colors.white, // Change this to your desired color
-  ),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
           widget.examName,
-          style: GoogleFonts.poppins(color: Colors.white)
+          style: GoogleFonts.poppins(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         backgroundColor: MyColors.appbar,
         centerTitle: true,
@@ -60,60 +63,87 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
             itemCount: tests.length,
             itemBuilder: (_, index) {
               final test = tests[index];
-              return GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MockTestScreen(test: test),
-                    ),
-                  );
-                },
-                child: Card(
-                  elevation: 6,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOut,
+                margin: const EdgeInsets.only(bottom: 16),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MockTestScreen(test: test),
+                      ),
+                    );
+                  },
                   child: Container(
-                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       gradient: LinearGradient(
-                        colors: [Colors.purple.shade50, Colors.white],
+                        colors: [Colors.deepPurple.shade400, Colors.deepPurple.shade200],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.quiz, size: 36, color: Colors.deepPurple),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                test.title,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                "Duration: ${test.duration} mins",
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                              Text(
-                                "Marks: ${test.totalMarks}",
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ],
-                          ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.deepPurple.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
-                        const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.deepPurple),
                       ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                )
+                              ],
+                            ),
+                            child: const Icon(Icons.quiz,
+                                size: 32, color: Colors.deepPurple),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  test.title,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    _buildInfoChip(
+                                        icon: Icons.timer,
+                                        label: "${test.duration} mins"),
+                                    const SizedBox(width: 8),
+                                    _buildInfoChip(
+                                        icon: Icons.star,
+                                        label: "${test.totalMarks} Marks"),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios,
+                              size: 18, color: Colors.white),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -121,6 +151,26 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildInfoChip({required IconData icon, required String label}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: GoogleFonts.poppins(color: Colors.white, fontSize: 12),
+          ),
+        ],
       ),
     );
   }
