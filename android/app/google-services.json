@@ -7,18 +7,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1091229655342:android:8ae673054c66400b6cdabf",
+        "mobilesdk_app_id": "1:1091229655342:android:92866d7e3c6645d86cdabf",
         "android_client_info": {
-          "package_name": "com.rogzarpath.govexam"
+          "package_name": "com.rozgarpath.exam"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1091229655342-35v499u882c459gqeipvedap4rlhqapd.apps.googleusercontent.com",
+          "client_id": "1091229655342-52eca4k1ofkcmanb4qtrsb67m4htkmgo.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.rogzarpath.govexam",
-            "certificate_hash": "01529e326043ac70ff9da96a2c79f9cacd758bd9"
+            "package_name": "com.rozgarpath.exam",
+            "certificate_hash": "18951a1fa6f50c31507e5243a155c9a3a172859f"
           }
         },
         {

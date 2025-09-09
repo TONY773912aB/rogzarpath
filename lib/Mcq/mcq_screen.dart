@@ -63,20 +63,18 @@ class _MCQScreenState extends State<MCQScreen> {
     setState(() => isLoading = false);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
-  
-  
+
   void toggleBookmark(int index) async {
-  setState(() {
-    mcqs[index].isBookmarked = !mcqs[index].isBookmarked;
-  });
+    setState(() {
+      mcqs[index].isBookmarked = !mcqs[index].isBookmarked;
+    });
 
-  if (mcqs[index].isBookmarked) {
-    await BookmarkService.addBookmark(mcqs[index]);
-  } else {
-    await BookmarkService.removeBookmark(mcqs[index].question);
+    if (mcqs[index].isBookmarked) {
+      await BookmarkService.addBookmark(mcqs[index]);
+    } else {
+      await BookmarkService.removeBookmark(mcqs[index].question);
+    }
   }
-}
-
 
   void selectOption(String label) {
     if (mcqs[currentIndex].selectedOption != null) return;
@@ -160,7 +158,6 @@ class _MCQScreenState extends State<MCQScreen> {
     );
   }
 
-  // ✅ Submit user attempts to API
   Future<void> submitAttempts() async {
     final url = Uri.parse('${ApiService.appUrl}save_mcq_attempt.php');
 
@@ -182,9 +179,6 @@ class _MCQScreenState extends State<MCQScreen> {
     );
 
     final data = jsonDecode(response.body);
-    print("data print............");
-    print(data);
-    print(data['status']);
     if (data['status']) {
       showDialog(
         context: context,
@@ -209,6 +203,55 @@ class _MCQScreenState extends State<MCQScreen> {
     }
   }
 
+  // ✅ Question Palette (Bottom Sheet)
+  void showQuestionPalette() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: GridView.builder(
+            shrinkWrap: true,
+            itemCount: mcqs.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 6,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+            ),
+            itemBuilder: (context, index) {
+              final mcq = mcqs[index];
+              Color color;
+              if (mcq.selectedOption != null) {
+                color = Colors.green; // answered
+              } else if (mcq.isBookmarked) {
+                color = Colors.orange; // bookmarked
+              } else {
+                color = Colors.grey; // not answered
+              }
+
+              return GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() => currentIndex = index);
+                },
+                child: CircleAvatar(
+                  backgroundColor: color,
+                  child: Text(
+                    "${index + 1}",
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mcq = mcqs.isNotEmpty ? mcqs[currentIndex] : null;
@@ -218,10 +261,14 @@ class _MCQScreenState extends State<MCQScreen> {
       appBar: AppBar(
         backgroundColor: MyColors.appbar,
         elevation: 2,
-        iconTheme: IconThemeData(
-    color: Colors.white, // Change this to your desired color
-  ),
-        title: Text(widget.subjectName, style: GoogleFonts.poppins(color:Colors.white),),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text(widget.subjectName, style: GoogleFonts.poppins(color: Colors.white)),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.grid_view, color: Colors.white),
+            onPressed: showQuestionPalette,
+          ),
+        ],
       ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -270,7 +317,6 @@ class _MCQScreenState extends State<MCQScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Previous Button
                           GestureDetector(
                             onTap: currentIndex > 0 ? () => setState(() => currentIndex--) : null,
                             child: AnimatedContainer(
@@ -300,24 +346,16 @@ class _MCQScreenState extends State<MCQScreen> {
                               ),
                             ),
                           ),
-
-                          // Next or Submit Button
                           GestureDetector(
                             onTap: () {
                               if (currentIndex < mcqs.length - 1) {
                                 setState(() => currentIndex++);
                               } else {
-                               
-                               if(UserTable.googleId=="" ||UserTable.googleId==null ||UserTable.googleId=="null" ){
-                                print("User ID is Null/Empty............");
-                                print(UserTable.googleId);
-                                
-                               }else{
-                                print("User ID is Not Null/Empty............");
-                                print(UserTable.googleId);
-submitAttempts();
-                               }
-                                
+                                if (UserTable.googleId == "" || UserTable.googleId == null || UserTable.googleId == "null") {
+                                  print("User ID is Null/Empty............");
+                                } else {
+                                  submitAttempts();
+                                }
                               }
                             },
                             child: AnimatedContainer(

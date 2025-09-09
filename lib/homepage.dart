@@ -1,25 +1,30 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rogzarpath/BannerCarousel.dart';
 import 'package:rogzarpath/DailyQuizLeaderboard.dart';
 import 'package:rogzarpath/Job/job.dart';
 import 'package:rogzarpath/Mcq/bookmark_question.dart';
 import 'package:rogzarpath/Profile/aboutus.dart';
 import 'package:rogzarpath/Profile/deawer.dart';
+import 'package:rogzarpath/constant/model.dart';
 import 'package:rogzarpath/currentaffair/currentaffairtab.dart';
 import 'package:rogzarpath/daily_news_screen.dart';
 import 'package:rogzarpath/daily_quiz_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rogzarpath/dashboard.dart';
 import 'package:rogzarpath/syllabus_list_screen.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-
+  final int index=0;
 
 final List<_HomeFeature> features = [
   
-  _HomeFeature("Daily Quiz", Icons.calendar_today, (context) {
+  _HomeFeature("Daily Quiz", Icons.calendar_today, (context,index) {
     print("Daily Quiz tapped");
     Navigator.push(
   context,
@@ -27,7 +32,47 @@ final List<_HomeFeature> features = [
 );
   
   }),
-  _HomeFeature("PDF Notes", Icons.picture_as_pdf, (context) {
+   _HomeFeature("Jobs", Icons.work_outline_rounded, (context,index) {
+    print("Jobs..........................................");
+    if (index == 1) {
+      // open Jobs tab
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DashboardScreen(initialIndex: 1)),
+      );}
+
+
+    print("Jobs tapped");
+    print(index);
+  }),
+   _HomeFeature("MCQs", Icons.quiz_rounded, (context,index) {
+    print("MCQS..........................................");
+    if (index == 2) {
+      // open Jobs tab
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DashboardScreen(initialIndex: 2)),
+      );}
+
+
+    print("Jobs tapped");
+    print(index);
+  }),
+
+   _HomeFeature("Mock Test", Icons.quiz_rounded, (context,index) {
+    print("Mock Test..........................................");
+    if (index == 3) {
+      // open Jobs tab
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => DashboardScreen(initialIndex: 3)),
+      );}
+
+
+    print("Jobs tapped");
+    print(index);
+  }),
+  _HomeFeature("PDF Notes", Icons.picture_as_pdf, (context,index) {
     print("PDF Notes tapped");
     
     Navigator.push(
@@ -35,14 +80,14 @@ final List<_HomeFeature> features = [
   MaterialPageRoute(builder: (_) => SyllabusListScreen()),
 );
   }),
-  _HomeFeature("Mock History", Icons.history_edu, (context) {
+  _HomeFeature("MCQs History", Icons.history_edu, (context,index) {
     print("Mock History tapped");
     Navigator.push(
   context,
   MaterialPageRoute(builder: (_) => BookmarkPage()),
 );
   }),
-  _HomeFeature("Leaderboard", Icons.leaderboard, (context) {
+  _HomeFeature("Leaderboard", Icons.leaderboard, (context,index) {
     print("Leaderboard tapped");
     
     Navigator.push(
@@ -50,7 +95,7 @@ final List<_HomeFeature> features = [
   MaterialPageRoute(builder: (_) => DailyQuizLeaderboardScreen()),
 );
   }),
-  _HomeFeature("Current Affairs", Icons.newspaper, (context) {
+  _HomeFeature("Current Affairs", Icons.newspaper, (context,index) {
     print("Current Affairs..........................................");
     Navigator.push(
   context,
@@ -59,6 +104,8 @@ final List<_HomeFeature> features = [
 
     print("Notifications tapped");
   }),
+
+  
  
 ];
 
@@ -89,6 +136,9 @@ final List<_HomeFeature> features = [
     {'title': 'Terms & Condition', 'icon': Icons.privacy_tip_outlined},
   ];
 
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,8 +152,9 @@ final List<_HomeFeature> features = [
 ])
 ,
     
+
       appBar: AppBar(
-        title:  Text("RogzarPath",style: GoogleFonts.poppins(fontWeight:FontWeight.w600),),
+        title:  Text("Rozgarpath",style: GoogleFonts.poppins(fontWeight:FontWeight.w600),),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -118,120 +169,150 @@ final List<_HomeFeature> features = [
         padding: const EdgeInsets.all(5),
         child: Column(
           children: [
-            Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: CarouselSlider.builder(
-          itemCount: sliderData.length,
-          itemBuilder: (context, index, realIndex) {
-            final item = sliderData[index];
-            return Card(
-              elevation: 6,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                 Image.asset(
-                item['image']!,
-                fit: BoxFit.fill,
-                width: double.infinity,
-              ),
-                  Positioned(
-                    bottom: 30,
-                    left: 20,
-                    right: 20,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item['title']!,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          item['desc']!,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white70,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-          options: CarouselOptions(
-            height: 240,
-            autoPlay: true,
-            enlargeCenterPage: true,
-            viewportFraction: 0.98,
-            aspectRatio: 16 / 9,
-            autoPlayCurve: Curves.fastOutSlowIn,
-            enableInfiniteScroll: true,
-            autoPlayAnimationDuration: Duration(seconds: 2),
-          ),
-        ),
-      ),
+           
+           
+      //       Padding(
+      //   padding: const EdgeInsets.all(0.0),
+      //   child: CarouselSlider.builder(
+      //     itemCount: sliderData.length,
+      //     itemBuilder: (context, index, realIndex) {
+      //       final item = sliderData[index];
+      //       return Card(
+      //         elevation: 6,
+      //         shape: RoundedRectangleBorder(
+      //           borderRadius: BorderRadius.circular(10),
+      //         ),
+      //         clipBehavior: Clip.antiAlias,
+      //         child: Stack(
+      //           fit: StackFit.expand,
+      //           children: [
+      //            Image.asset(
+      //           item['image']!,
+      //           fit: BoxFit.fill,
+      //           width: double.infinity,
+      //         ),
+      //             Positioned(
+      //               bottom: 30,
+      //               left: 20,
+      //               right: 20,
+      //               child: Column(
+      //                 crossAxisAlignment: CrossAxisAlignment.start,
+      //                 children: [
+      //                   Text(
+      //                     item['title']!,
+      //                     style: TextStyle(
+      //                       fontSize: 22,
+      //                       fontWeight: FontWeight.bold,
+      //                       color: Colors.white,
+      //                     ),
+      //                   ),
+      //                   const SizedBox(height: 6),
+      //                   Text(
+      //                     item['desc']!,
+      //                     style: TextStyle(
+      //                       fontSize: 16,
+      //                       color: Colors.white70,
+      //                     ),
+      //                   ),
+      //                 ],
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       );
+      //     },
+      //     options: CarouselOptions(
+      //       height: 240,
+      //       autoPlay: true,
+      //       enlargeCenterPage: true,
+      //       viewportFraction: 0.98,
+      //       aspectRatio: 16 / 9,
+      //       autoPlayCurve: Curves.fastOutSlowIn,
+      //       enableInfiniteScroll: true,
+      //       autoPlayAnimationDuration: Duration(seconds: 2),
+      //     ),
+      //   ),
+      // ),
+   
+   BannerCarousel(),
     SizedBox(height: 20,),
            
-            Expanded(
-              child: GridView.builder(
-                itemCount: features.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                  childAspectRatio: 0.9,
-                ),
-                itemBuilder: (context, index) {
-                  final feature = features[index];
-                  return GestureDetector(
-                    onTap: () {
-                      feature.onTap(context);
-                      // Navigate to respective screen
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.deepPurple.shade50,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.deepPurple.shade100,
-                            blurRadius: 6,
-                            offset: Offset(2, 4),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(feature.icon, size: 34, color: Colors.deepPurple),
-                          const SizedBox(height: 10),
-                          Text(
-                            feature.label,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: Colors.deepPurple.shade800,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+           Expanded(
+  child: GridView.builder(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    itemCount: features.length,
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 3,
+      mainAxisSpacing: 20,
+      crossAxisSpacing: 20,
+      childAspectRatio: 0.9,
+    ),
+    itemBuilder: (context, index) {
+      final feature = features[index];
+      return GestureDetector(
+        onTap: () => feature.onTap(context,index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.deepPurple.shade400,
+                Colors.deepPurple.shade600,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.deepPurple.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(4, 6),
+              ),
+            ],
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(20),
+            splashColor: Colors.white.withOpacity(0.2),
+            highlightColor: Colors.white.withOpacity(0.1),
+            onTap: () => feature.onTap(context,index),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Circle icon background
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.9),
+                  ),
+                  child: Icon(
+                    feature.icon,
+                    size: 36,
+                    color: Colors.deepPurple.shade700,
+                  ),
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  feature.label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  ),
+)
+
           
           ],
         ),
@@ -243,7 +324,7 @@ final List<_HomeFeature> features = [
 class _HomeFeature {
   final String label;
   final IconData icon;
-  final void Function(BuildContext context) onTap;
+  final void Function(BuildContext context, int index) onTap;
 
   _HomeFeature(this.label, this.icon, this.onTap);
 }

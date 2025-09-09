@@ -1,4 +1,4 @@
-package com.rogzarpath.govexam
+package com.rozgarpath.exam
 
 import io.flutter.embedding.android.FlutterActivity
 

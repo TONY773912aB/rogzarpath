@@ -41,7 +41,10 @@ class _ExamScreenState extends State<ExamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Exam',style: GoogleFonts.poppins(color:Colors.white),),
+         automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text('Choose Exam (MCQS)',style: GoogleFonts.poppins( fontWeight: FontWeight.w600,
+            fontSize: 20,color:Colors.white),),
         backgroundColor: MyColors.appbar,
         elevation: 0,
       ),
@@ -54,7 +57,7 @@ class _ExamScreenState extends State<ExamScreen> {
                   child: GridView.builder(
                     itemCount: exams.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 3,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                       childAspectRatio: 1,

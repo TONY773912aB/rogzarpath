@@ -39,7 +39,9 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
 
     return Scaffold(
       appBar: AppBar(
-        title:  Text('Latest Government Jobs',style: GoogleFonts.poppins(color: Colors.white,),),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title:  Text('Latest Government Jobs',style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize:22,color: Colors.white,),),
         backgroundColor: Colors.deepPurple,
         bottom: TabBar(
           controller: tabController,
@@ -48,7 +50,7 @@ class _JobsScreenState extends State<JobsScreen> with TickerProviderStateMixin {
           unselectedLabelColor: Colors.white70,
           indicatorColor: Colors.white,
           indicatorWeight: 3,
-        labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+        labelStyle: GoogleFonts.poppins(fontWeight: FontWeight.w500, fontSize:17),
           tabs: [
             const Tab(text: "All"),
             ...categories.map((cat) => Tab(text: cat['name'])).toList()
@@ -155,7 +157,7 @@ class _JobsListWidgetState extends State<JobsListWidget> {
                     title,
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.w600, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   Row(
@@ -164,7 +166,7 @@ class _JobsListWidgetState extends State<JobsListWidget> {
                       const SizedBox(width: 6),
                       Text(
                         "Published: $date",
-                        style: const TextStyle(color: Colors.grey),
+                        style: GoogleFonts.poppins(color: Colors.grey),
                       ),
                       const Spacer(),
                       IconButton(

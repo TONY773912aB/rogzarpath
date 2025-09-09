@@ -220,8 +220,16 @@ class _DailyDetailScreenState extends State<DailyDetailScreen> {
     if (data == null) {
       return Scaffold(appBar: AppBar(), body: const Center(child: Text('No data')));
     }
-
-    final bullets = data!['bullets'] as List<dynamic>;
+    
+ final rawBullets = data!['bullets'];
+List<dynamic> bullets = [];
+if (rawBullets is List) {
+  bullets = rawBullets;
+} else if (rawBullets is Map) {
+  bullets = rawBullets.values.toList();
+} else if (rawBullets != null) {
+  bullets = [rawBullets.toString()];
+}
     final formatted = DateFormat.yMMMMd().format(DateTime.parse(data!['affair_date']));
 
     return Scaffold(
@@ -312,7 +320,7 @@ class _PdfListTabState extends State<PdfListTab> {
       basePath = basePath.substring(0, basePath.length - 1);
     }
     filename = filename.replaceAll(RegExp(r'^/+'), '');
-    final String url = "http://10.161.153.180/rozgarpath_admin/$basePath/$filename";
+    final String url = "https://rozgarpathadmin.vacancygyan.in/$basePath/$filename";
     final uri = Uri.parse(url);
 
     try {

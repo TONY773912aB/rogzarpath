@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/MockTest/mock_test_list_screen.dart';
 import 'package:rogzarpath/api_service.dart';
@@ -41,7 +42,10 @@ class _MockExamListState extends State<MockExamList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose Exam',style: GoogleFonts.poppins(color: Colors.white)),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        title: Text('Choose Exam (Mock Test)',style: GoogleFonts.poppins(  fontWeight: FontWeight.w600,
+            fontSize: 20,color: Colors.white,)),
         backgroundColor: MyColors.appbar,
         elevation: 0,
       ),
@@ -54,7 +58,7 @@ class _MockExamListState extends State<MockExamList> {
                   child: GridView.builder(
                     itemCount: exams.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 3,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
                       childAspectRatio: 1,

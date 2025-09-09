@@ -3,6 +3,9 @@ import 'package:rogzarpath/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 // Global notification plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -14,23 +17,45 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   _showNotification(message);
 }
 
-
-// Show notification (foreground + background)
-void _showNotification(RemoteMessage message) {
+Future<void> _showNotification(RemoteMessage message) async {
   final notification = message.notification;
   if (notification == null) return;
 
-  const androidDetails = AndroidNotificationDetails(
+  String? imageUrl = message.notification?.android?.imageUrl ?? message.data['image'];
+  BigPictureStyleInformation? styleInformation;
+
+  if (imageUrl != null && imageUrl.isNotEmpty) {
+    try {
+      // Download the image
+      final response = await http.get(Uri.parse(imageUrl));
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      final filePath = '${documentDirectory.path}/notif_image.jpg';
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+
+      styleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(filePath),
+        contentTitle: notification.title,
+        summaryText: notification.body,
+      );
+    } catch (e) {
+      print("❌ Error loading image: $e");
+    }
+  }
+
+  final androidDetails = AndroidNotificationDetails(
     'default_channel',
     'General Notifications',
     channelDescription: 'This channel is for general notifications',
     importance: Importance.high,
     priority: Priority.high,
-    icon: '@drawable/icon', // ✅ Custom app icon
-    //largeIcon: DrawableResourceAndroidBitmap('@drawable/logo2'), // ✅ Big icon
+    icon: '@drawable/icon',
+    largeIcon: const DrawableResourceAndroidBitmap('@drawable/logo2'),
+    styleInformation: styleInformation,
   );
 
-  const details = NotificationDetails(android: androidDetails);
+  final details = NotificationDetails(android: androidDetails);
+
   flutterLocalNotificationsPlugin.show(
     notification.hashCode,
     notification.title,
@@ -38,7 +63,6 @@ void _showNotification(RemoteMessage message) {
     details,
   );
 }
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

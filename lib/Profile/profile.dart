@@ -127,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 radius: 48,
                 backgroundImage: photoUrl.isNotEmpty
                     ? NetworkImage(photoUrl)
-                    : const AssetImage('assets/user.png') as ImageProvider,
+                    : const AssetImage('assets/logo.png') as ImageProvider,
               ),
             ),
           ),
@@ -173,8 +173,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           title,
           style: GoogleFonts.poppins(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: color ?? Colors.black87,
           ),
         ),
@@ -183,3 +183,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+

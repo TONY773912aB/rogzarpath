@@ -169,7 +169,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           widget.jobTitle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.poppins(color:Colors.white),
+          style: GoogleFonts.poppins(color:Colors.white, fontSize:20),
         ),
         actions: [
           IconButton(
