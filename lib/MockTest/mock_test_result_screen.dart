@@ -1,114 +1,189 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MockTestResultScreen extends StatelessWidget {
   final int score;
   final int total;
+  final int correct;
+  final int wrong;
+  final int unattempted;
+  final String timeTaken;
 
-  const MockTestResultScreen({required this.score, required this.total});
-  
+  const MockTestResultScreen({
+    super.key,
+    required this.score,
+    required this.total,
+    required this.correct,
+    required this.wrong,
+    required this.unattempted,
+    required this.timeTaken,
+  });
+
   @override
   Widget build(BuildContext context) {
-    int wrong = total - score;
+    double percentage = (score / total) * 100;
+    String status = percentage >= 50 ? "Great Job!" : "Needs Improvement";
 
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text("Test Result",style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.indigo,
+        title: Text("Test Summary", style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.deepPurple,
         elevation: 0,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Your Performance",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 32),
-            AspectRatio(
-              aspectRatio: 1.3,
-              child: BarChart(
-                BarChartData(
-                  alignment: BarChartAlignment.spaceAround,
-                  maxY: total.toDouble() + 2,
-                  barTouchData: BarTouchData(enabled: true),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                      ),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        getTitlesWidget: (double value, TitleMeta meta) {
-                          switch (value.toInt()) {
-                            case 0:
-                              return Text('Correct');
-                            case 1:
-                              return Text('Wrong');
-                            default:
-                              return Text('');
-                          }
-                        },
-                        reservedSize: 28,
-                      ),
-                    ),
+            // Score Card
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 6,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.deepPurple, Colors.purpleAccent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
-                  borderData: FlBorderData(show: false),
-                  barGroups: [
-                    BarChartGroupData(
-                      x: 0,
-                      barRods: [
-                        BarChartRodData(
-                          toY: score.toDouble(),
-                          color: Colors.greenAccent,
-                          width: 32,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Text(
+                      "Your Score",
+                      style: GoogleFonts.poppins(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    BarChartGroupData(
-                      x: 1,
-                      barRods: [
-                        BarChartRodData(
-                          toY: wrong.toDouble(),
-                          color: Colors.redAccent,
-                          width: 32,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ],
+                    SizedBox(height: 12),
+                    Text(
+                      "$score / $total",
+                      style: GoogleFonts.poppins(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 12),
+                    LinearProgressIndicator(
+                      value: percentage / 100,
+                      minHeight: 8,
+                      color: Colors.white,
+                      backgroundColor: Colors.white.withOpacity(0.3),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "${percentage.toStringAsFixed(1)}%",
+                      style: GoogleFonts.poppins(color: Colors.white70, fontSize: 16),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      status,
+                      style: GoogleFonts.poppins(color: Colors.white, fontSize: 18),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 40),
-            Text(
-              "Score: $score / $total",
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
+
+            SizedBox(height: 20),
+
+            // Details Card
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    InfoRow(label: "Time Taken", value: timeTaken),
+                    Divider(),
+                    InfoRow(label: "Total Questions", value: "$total"),
+                    Divider(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        ResultBox(label: "Correct", value: correct, color: Colors.green),
+                        ResultBox(label: "Wrong", value: wrong, color: Colors.red),
+                        ResultBox(label: "Unanswered", value: unattempted, color: Colors.grey),
+                      ],
+                    )
+                  ],
+                ),
+              ),
             ),
-            SizedBox(height: 10),
+
+            SizedBox(height: 20),
+
+            // Buttons
             ElevatedButton.icon(
               onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-              icon: Icon(Icons.home),
-              label: Text("Back to Home"),
+              icon: Icon(Icons.home,color: Colors.white,),
+              label: Text("Back to Home", style: GoogleFonts.poppins(fontSize: 16,color:Colors.white)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                backgroundColor: Colors.deepPurple,
+                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
+            SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () {
+                // Navigate to answers screen
+              },
+              icon: Icon(Icons.list, color: Colors.deepPurple),
+              label: Text("View Answers", style: GoogleFonts.poppins(fontSize: 16, color: Colors.deepPurple)),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.deepPurple),
+                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class InfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+  const InfoRow({super.key, required this.label, required this.value});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500)),
+          Text(value, style: GoogleFonts.poppins(fontSize: 16)),
+        ],
+      ),
+    );
+  }
+}
+
+class ResultBox extends StatelessWidget {
+  final String label;
+  final int value;
+  final Color color;
+  const ResultBox({super.key, required this.label, required this.value, required this.color});
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            value.toString(),
+            style: GoogleFonts.poppins(fontSize: 20, fontWeight: FontWeight.bold, color: color),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(label, style: GoogleFonts.poppins(fontSize: 14)),
+      ],
     );
   }
 }

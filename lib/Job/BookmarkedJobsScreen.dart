@@ -84,12 +84,12 @@ class _BookmarkedJobsScreenState extends State<BookmarkedJobsScreen> {
 
           return GestureDetector(
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => JobBookmarkDetailScreen(jobData: job),
-                ),
-              );
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (_) => JobBookmarkDetailScreen(jobData: job),
+              //   ),
+              // );
             },
             child: Container(
               margin: const EdgeInsets.only(bottom: 16),

@@ -1,6 +1,4 @@
-// models/mcq_model.dart
-
-class MCQ {
+class MCQ {    
   final String id;
   final String question;
   final String optionA;

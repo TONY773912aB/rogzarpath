@@ -54,6 +54,12 @@ class _MockTestScreenState extends State<MockTestScreen> {
     });
   }
 
+String formatTime(int secondsLeft) {
+  final minutes = secondsLeft ~/ 60;
+  final seconds = secondsLeft % 60;
+  return '${minutes.toString().padLeft(2, '0')} : ${seconds.toString().padLeft(2, '0')} min';
+}
+
   void submitTest() async {
     _timer.cancel();
 
@@ -75,12 +81,21 @@ class _MockTestScreenState extends State<MockTestScreen> {
     );
 
     if (result['success']) {
+      print(result['success']);
+      final int score = (result['score'] as num).toInt();
+final int correct = (result['correct'] as num).toInt();
+final int wrong = (result['wrong'] as num).toInt();
+final int unattempted = questions.length - correct - wrong;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => MockTestResultScreen(
-            score: result['score'],
-            total: questions.length,
+           score: result['score'],
+      total: questions.length,
+      correct: result['correct'],
+      wrong: result['wrong'],
+      unattempted: unattempted,
+      timeTaken: formatTime(secondsLeft),
           ),
         ),
       );

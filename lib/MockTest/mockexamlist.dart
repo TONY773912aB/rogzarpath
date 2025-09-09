@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/MockTest/mock_test_list_screen.dart';
 import 'package:rogzarpath/api_service.dart';
@@ -108,7 +107,7 @@ class _MockExamListState extends State<MockExamList> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Colors.white,
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
