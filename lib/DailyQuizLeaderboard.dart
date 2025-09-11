@@ -62,7 +62,7 @@ class _DailyQuizLeaderboardScreenState extends State<DailyQuizLeaderboardScreen>
             color: MyColors.appbar
           ),
         ),
-        title: Text("🏆 Daily Quiz Leaderboard", style: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: Colors.white)),
+        title: Text("🏆 Daily Quiz Leaderboard", style: GoogleFonts.poppins(fontWeight: FontWeight.w600, color: Colors.white, fontSize:17)),
         centerTitle: true,
       ),
       body: isLoading

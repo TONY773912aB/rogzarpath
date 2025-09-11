@@ -113,7 +113,7 @@ class _MCQScreenState extends State<MCQScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.symmetric(vertical: 6),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(color: borderColor, width: 1.5),
@@ -144,10 +144,10 @@ class _MCQScreenState extends State<MCQScreen> {
                 style: TextStyle(
                   fontSize: 16,
                   color: isCorrect
-                      ? Colors.green.shade900
+                      ? Colors.black
                       : isWrong
                           ? Colors.red.shade900
-                          : Colors.black87,
+                          : Colors.black,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -181,21 +181,106 @@ class _MCQScreenState extends State<MCQScreen> {
     final data = jsonDecode(response.body);
     if (data['status']) {
       showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("✅ Submitted"),
-          content: const Text("Your answers have been submitted successfully."),
-          actions: [
-            TextButton(
+  context: context,
+  barrierDismissible: false, // prevent accidental close
+  builder: (_) => Dialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    child: Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // ✅ Success Icon with Glow
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.greenAccent.withOpacity(0.6),
+                  blurRadius: 25,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.check_circle,
+              size: 60,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // ✅ Title
+          Text(
+            "Submitted Successfully",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ✅ Message
+          Text(
+            "Your answers have been submitted.\nBest of luck! 🎉",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 15,
+              color: Colors.white70,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // ✅ OK Button with Gradient
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black87,
+                elevation: 4,
+              ),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              child: const Text("OK"),
+              child: const Text(
+                "OK",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    ),
+  ),
+);
+
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(data['message'] ?? "Submission failed")),
@@ -284,7 +369,7 @@ class _MCQScreenState extends State<MCQScreen> {
                           Expanded(
                             child: Text(
                               "Q${currentIndex + 1}. ${mcq!.question}",
-                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                              style:  GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),
                             ),
                           ),
                           IconButton(
@@ -296,7 +381,7 @@ class _MCQScreenState extends State<MCQScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
                       buildOption(mcq, mcq.optionA, 'A'),
                       buildOption(mcq, mcq.optionB, 'B'),
                       buildOption(mcq, mcq.optionC, 'C'),
@@ -310,7 +395,7 @@ class _MCQScreenState extends State<MCQScreen> {
                         const SizedBox(height: 6),
                         Text(
                           "📝 Explanation: ${mcq.explanation}",
-                          style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic),
+                          style: const TextStyle(fontSize: 15, fontStyle: FontStyle.normal),
                         ),
                       ],
                       const Spacer(),
@@ -321,7 +406,7 @@ class _MCQScreenState extends State<MCQScreen> {
                             onTap: currentIndex > 0 ? () => setState(() => currentIndex--) : null,
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                               decoration: BoxDecoration(
                                 gradient: currentIndex > 0
                                     ? const LinearGradient(colors: [Color(0xFF6A11CB), Color(0xFF2575FC)])
@@ -360,10 +445,10 @@ class _MCQScreenState extends State<MCQScreen> {
                             },
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 200),
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                               decoration: BoxDecoration(
                                 gradient: currentIndex < mcqs.length - 1
-                                    ? const LinearGradient(colors: [Color(0xFF43C6AC), Color(0xFF191654)])
+                                    ? const LinearGradient(colors: [Color(0xFF191654), Color(0xFF191654)])
                                     : const LinearGradient(colors: [Color(0xFF00B09B), Color(0xFF96C93D)]),
                                 borderRadius: BorderRadius.circular(30),
                                 boxShadow: [

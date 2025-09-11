@@ -91,6 +91,8 @@ print("Email: ${UserTable.email}");
           currentIndex: _currentIndex,
           backgroundColor: MyColors.appbar,
           selectedItemColor: Colors.white,
+          selectedLabelStyle: GoogleFonts.poppins(),
+          unselectedLabelStyle: GoogleFonts.poppins(),
           unselectedItemColor: Colors.grey[400],
           onTap: (index) => setState(() => _currentIndex = index),
           items: const [

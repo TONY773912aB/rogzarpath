@@ -1,15 +1,4 @@
 class MCQ {    
-  final String id;
-  final String question;
-  final String optionA;
-  final String optionB;
-  final String optionC;
-  final String optionD;
-  final String correctOption;
-  final String explanation;
-  bool isBookmarked;
-  String? selectedOption;
-
   MCQ({
     required this.id,
     required this.question,
@@ -37,8 +26,18 @@ class MCQ {
       selectedOption: json['selected_option'], // optional
     );
   }
-  
-  
+
+  final String correctOption;
+  final String explanation;
+  final String id;
+  bool isBookmarked;
+  final String optionA;
+  final String optionB;
+  final String optionC;
+  final String optionD;
+  final String question;
+  String? selectedOption;
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -57,9 +56,9 @@ class MCQ {
 
 
 class UserTable {
+  static String email = "";
   static String googleId = "";
   static String name = "";
-  static String email = "";
   static String photoUrl = "";
 
   static void setUser({
@@ -84,13 +83,6 @@ class UserTable {
 
 
 class MockTest {
-  final int id;
-  final int examId;
-  final String title;
-  final int duration;
-  final int totalMarks;
-  final String createdAt;
-
   MockTest({
     required this.id,
     required this.examId,
@@ -110,18 +102,17 @@ class MockTest {
       createdAt: json['created_at'],
     );
   }
+
+  final String createdAt;
+  final int duration;
+  final int examId;
+  final int id;
+  final String title;
+  final int totalMarks;
 }
 
 
 class MockQuestion {
-  final int id;
-  final String question;
-  final String optionA;
-  final String optionB;
-  final String optionC;
-  final String optionD;
-  final String correctAns;
-
   MockQuestion({
     required this.id,
     required this.question,
@@ -143,14 +134,17 @@ class MockQuestion {
       correctAns: json['correct_ans'],
     );
   }
+
+  final String correctAns;
+  final int id;
+  final String optionA;
+  final String optionB;
+  final String optionC;
+  final String optionD;
+  final String question;
 }
 
 class SyllabusPDF {
-  final String id;
-  final String examName;
-  final String pdfTitle;
-  final String pdfUrl;
-
   SyllabusPDF({
     required this.id,
     required this.examName,
@@ -167,6 +161,11 @@ class SyllabusPDF {
     );
   }
 
+  final String examName;
+  final String id;
+  final String pdfTitle;
+  final String pdfUrl;
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -179,14 +178,6 @@ class SyllabusPDF {
 
 
 class DailyQuizQuestion {
-  final int id;
-  final String question;
-  final String optionA;
-  final String optionB;
-  final String optionC;
-  final String optionD;
-  final String correctAns;
-
   DailyQuizQuestion({
     required this.id,
     required this.question,
@@ -208,15 +199,18 @@ class DailyQuizQuestion {
       correctAns: json['correct_ans'],
     );
   }
+
+  final String correctAns;
+  final int id;
+  final String optionA;
+  final String optionB;
+  final String optionC;
+  final String optionD;
+  final String question;
 }
 
 
 class BannerModel {
-  final String id;
-  final String title;
-  final String imageUrl;
-  final String? link;
-
   BannerModel({
     required this.id,
     required this.title,
@@ -232,5 +226,10 @@ class BannerModel {
       link: json['link'],
     );
   }
+
+  final String id;
+  final String imageUrl;
+  final String? link;
+  final String title;
 }
 

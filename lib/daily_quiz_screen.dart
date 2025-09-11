@@ -42,8 +42,7 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
         if (_selectedAnswers[q.id] == q.correctAns) correct++;
       }
     }
-    
-    
+
     int wrong = attempted - correct;
 
     bool success = await ApiService.submitDailyQuiz(
@@ -53,91 +52,90 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
       correct: correct,
       wrong: wrong,
     );
-    print("print ....................");
-    print(success);
-   showDialog(
-  context: context,
-  barrierDismissible: false,
-  builder: (_) => AlertDialog(
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-    title: Row(
-      children: [
-        Icon(success ? Icons.check_circle : Icons.error, color: success ? Colors.green : Colors.red),
-        SizedBox(width: 8),
-        Text(
-          success ? "Quiz Submitted 🎉" : "Submission Failed ❌",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: success ? Colors.green[800] : Colors.red[800],
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: success
+                  ? [Colors.green.shade400, Colors.green.shade700]
+                  : [Colors.red.shade400, Colors.red.shade700],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-      ],
-    ),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Divider(thickness: 1),
-        SizedBox(height: 8),
-        Text(
-          "You answered $correct out of $total correctly!",
-          style: TextStyle(
-            fontSize: 18,
-            color: Colors.black87,
-            fontWeight: FontWeight.w500,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                success ? Icons.check_circle : Icons.error,
+                size: 70,
+                color: Colors.white,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                success ? "Quiz Submitted 🎉" : "Submission Failed ❌",
+                style: GoogleFonts.poppins(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                "You answered $correct / $total correctly",
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.white70,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.check, color: Colors.white),
+                label: Text("Continue", style: GoogleFonts.poppins(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white.withOpacity(0.2),
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                  if (success) Navigator.pop(context);
+                },
+              ),
+            ],
           ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 12),
-        Icon(Icons.emoji_events, color: Colors.amber, size: 40),
-        SizedBox(height: 8),
-      ],
-    ),
-    actions: [
-      Center(
-        child: ElevatedButton.icon(
-          icon: Icon(Icons.check, color: Colors.white),
-          label: Text("Continue", style: TextStyle(color: Colors.white)),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: success ? Colors.green : Colors.red,
-            padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-            if (success) Navigator.pop(context);
-          },
         ),
       ),
-      SizedBox(height: 12),
-    ],
-  ),
-);
-
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo.shade50,
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        iconTheme: IconThemeData(
-    color: Colors.white, // Change this to your desired color
-  ),
-        title: Text("📝 Daily Quiz",style: GoogleFonts.poppins(color: Colors.white),),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text("📝 Daily Quiz", style: GoogleFonts.poppins(color: Colors.white, fontSize:18)),
         backgroundColor: Colors.indigo,
+        elevation: 0,
       ),
       body: FutureBuilder<List<DailyQuizQuestion>>(
         future: _futureQuestions,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
-            return Center(child: CircularProgressIndicator());
-          if (snapshot.hasError)
-            return Center(child: Text("🚫 ${snapshot.error}"));
+            return const Center(child: CircularProgressIndicator());
+          if (snapshot.hasError) return Center(child: Text("🚫 ${snapshot.error}"));
           if (snapshot.hasData && snapshot.data!.isEmpty)
-            return Center(child: Text("📭 No questions found"));
+            return const Center(child: Text("📭 No questions found"));
 
-          if (!snapshot.hasData) return SizedBox();
+          if (!snapshot.hasData) return const SizedBox();
 
           final question = snapshot.data![_currentIndex];
 
@@ -145,36 +143,47 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                /// ✅ Progress Bar
-                LinearProgressIndicator(
-                  value: (_currentIndex + 1) / snapshot.data!.length,
-                  color: Colors.indigo,
-                  backgroundColor: Colors.grey.shade300,
+                /// ✅ Progress bar with percentage
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Q ${_currentIndex + 1}/${snapshot.data!.length}",
+                      style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+                    ),
+                    Text(
+                      "${((_currentIndex + 1) / snapshot.data!.length * 100).toInt()}%",
+                      style: GoogleFonts.poppins(color: Colors.indigo),
+                    ),
+                  ],
                 ),
-                SizedBox(height: 20),
-
-                /// ✅ Question Counter
-                Text(
-                  "Question ${_currentIndex + 1} of ${snapshot.data!.length}",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: (_currentIndex + 1) / snapshot.data!.length,
+                    minHeight: 10,
+                    color: Colors.indigo,
+                    backgroundColor: Colors.grey.shade300,
+                  ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 20),
 
                 /// ✅ Question Card
                 Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
+                  elevation: 6,
+                  shadowColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Text(
                       question.question,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
                 /// ✅ Options
                 ...["A", "B", "C", "D"].map((opt) {
@@ -187,63 +196,106 @@ class _DailyQuizScreenState extends State<DailyQuizScreen> {
 
                   bool isSelected = _selectedAnswers[question.id] == opt;
 
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 200),
-                    margin: const EdgeInsets.symmetric(vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isSelected ? Colors.indigo.shade100 : Colors.white,
-                      border: Border.all(
-                          color: isSelected
-                              ? Colors.indigo
-                              : Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListTile(
-                      title: Text(
-                        "$opt. $text",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedAnswers[question.id] = opt;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.indigo.shade100 : Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isSelected ? Colors.indigo : Colors.grey.shade300,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          if (isSelected)
+                            BoxShadow(
+                              color: Colors.indigo.withOpacity(0.2),
+                              blurRadius: 12,
+                              spreadRadius: 2,
+                            ),
+                        ],
                       ),
-                      onTap: () {
-                        setState(() {
-                          _selectedAnswers[question.id] = opt;
-                        });
-                      },
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 16,
+                            backgroundColor:
+                                isSelected ? Colors.indigo : Colors.grey.shade300,
+                            child: Text(opt,
+                                style: TextStyle(
+                                    color: isSelected ? Colors.white : Colors.black)),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              text,
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                          if (isSelected)
+                            const Icon(Icons.check_circle, color: Colors.indigo),
+                        ],
+                      ),
                     ),
                   );
                 }),
 
-                Spacer(),
+                const Spacer(),
 
                 /// ✅ Navigation Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton.icon(
-                      icon: Icon(Icons.arrow_back,color: Colors.white,),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: _currentIndex > 0 ? _prevQuestion : null,
-                      label: Text("Previous",style: TextStyle(color: Colors.white),),
+                      label: Text("Previous", style: GoogleFonts.poppins(color: Colors.white)),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey.shade700,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                       ),
                     ),
                     _currentIndex == snapshot.data!.length - 1
                         ? ElevatedButton.icon(
-                            icon: Icon(Icons.check_circle,color: Colors.white,),
-                            label: Text("Submit",style: TextStyle(color: Colors.white),),
+                            icon: const Icon(Icons.check_circle, color: Colors.white),
+                            label: Text("Submit",
+                                style: GoogleFonts.poppins(color: Colors.white)),
                             onPressed: () => _submit(snapshot.data!),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                             ),
                           )
                         : ElevatedButton.icon(
-                            icon: Icon(Icons.arrow_forward,color: Colors.white,),
-                            label: Text("Next",style: TextStyle(color: Colors.white),),
+                            icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                            label: Text("Next",
+                                style: GoogleFonts.poppins(color: Colors.white)),
                             onPressed: () => _nextQuestion(snapshot.data!.length),
                             style: ElevatedButton.styleFrom(
-                              
                               backgroundColor: Colors.indigo,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                             ),
                           ),
                   ],

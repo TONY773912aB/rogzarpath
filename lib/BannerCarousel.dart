@@ -110,7 +110,7 @@ Future<List<BannerModel>> fetchBanners() async {
             );
           },
           options: CarouselOptions(
-            height: 240,
+            height: 220,
             autoPlay: true,
             enlargeCenterPage: true,
             viewportFraction: 0.98,

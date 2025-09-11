@@ -169,85 +169,22 @@ final List<_HomeFeature> features = [
         padding: const EdgeInsets.all(5),
         child: Column(
           children: [
-           
-           
-      //       Padding(
-      //   padding: const EdgeInsets.all(0.0),
-      //   child: CarouselSlider.builder(
-      //     itemCount: sliderData.length,
-      //     itemBuilder: (context, index, realIndex) {
-      //       final item = sliderData[index];
-      //       return Card(
-      //         elevation: 6,
-      //         shape: RoundedRectangleBorder(
-      //           borderRadius: BorderRadius.circular(10),
-      //         ),
-      //         clipBehavior: Clip.antiAlias,
-      //         child: Stack(
-      //           fit: StackFit.expand,
-      //           children: [
-      //            Image.asset(
-      //           item['image']!,
-      //           fit: BoxFit.fill,
-      //           width: double.infinity,
-      //         ),
-      //             Positioned(
-      //               bottom: 30,
-      //               left: 20,
-      //               right: 20,
-      //               child: Column(
-      //                 crossAxisAlignment: CrossAxisAlignment.start,
-      //                 children: [
-      //                   Text(
-      //                     item['title']!,
-      //                     style: TextStyle(
-      //                       fontSize: 22,
-      //                       fontWeight: FontWeight.bold,
-      //                       color: Colors.white,
-      //                     ),
-      //                   ),
-      //                   const SizedBox(height: 6),
-      //                   Text(
-      //                     item['desc']!,
-      //                     style: TextStyle(
-      //                       fontSize: 16,
-      //                       color: Colors.white70,
-      //                     ),
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       );
-      //     },
-      //     options: CarouselOptions(
-      //       height: 240,
-      //       autoPlay: true,
-      //       enlargeCenterPage: true,
-      //       viewportFraction: 0.98,
-      //       aspectRatio: 16 / 9,
-      //       autoPlayCurve: Curves.fastOutSlowIn,
-      //       enableInfiniteScroll: true,
-      //       autoPlayAnimationDuration: Duration(seconds: 2),
-      //     ),
-      //   ),
-      // ),
-   
-   BannerCarousel(),
-    SizedBox(height: 20,),
+             
+         
+         BannerCarousel(),
+         
            
            Expanded(
-  child: GridView.builder(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    itemCount: features.length,
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        child: GridView.builder(
+          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10 ),
+          itemCount: features.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
       childAspectRatio: 0.9,
-    ),
-    itemBuilder: (context, index) {
+          ),
+          itemBuilder: (context, index) {
       final feature = features[index];
       return GestureDetector(
         onTap: () => feature.onTap(context,index),
@@ -297,9 +234,9 @@ final List<_HomeFeature> features = [
                 Text(
                   feature.label,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
                     color: Colors.white,
                     letterSpacing: 0.5,
                   ),
@@ -309,10 +246,10 @@ final List<_HomeFeature> features = [
           ),
         ),
       );
-    },
-  ),
-)
-
+          },
+        ),
+      )
+      
           
           ],
         ),

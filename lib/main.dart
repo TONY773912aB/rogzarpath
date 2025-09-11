@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/splashscreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -132,6 +133,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Rozgarpath',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          textTheme: GoogleFonts.poppinsTextTheme(),
         useMaterial3: true,
       ),
       home: const SplashScreen(),

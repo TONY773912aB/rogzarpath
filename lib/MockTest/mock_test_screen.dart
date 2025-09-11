@@ -356,11 +356,11 @@ final int unattempted = questions.length - correct - wrong;
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text("Mock Test",
-            style: GoogleFonts.poppins(color: Colors.white)),
+            style: GoogleFonts.poppins(color: Colors.white,fontSize:18)),
         backgroundColor: MyColors.appbar,
         actions: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
             child: Chip(
               backgroundColor: Colors.white,
               shape: BeveledRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -387,7 +387,7 @@ final int unattempted = questions.length - correct - wrong;
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

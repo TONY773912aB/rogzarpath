@@ -239,7 +239,7 @@ if (rawBullets is List) {
          iconTheme: IconThemeData(
     color: Colors.white, // Change this to your desired color
   ),
-        title: Text(data!['title'] ?? formatted,style: GoogleFonts.poppins(color:Colors.white),)),
+        title: Text(data!['title'] ?? formatted,style: GoogleFonts.poppins(color:Colors.white, fontSize:16),)),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: ListView.separated(

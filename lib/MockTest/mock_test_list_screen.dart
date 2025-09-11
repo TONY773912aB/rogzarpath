@@ -59,7 +59,7 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
 
           final tests = snapshot.data!;
           return ListView.builder(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(8),
             itemCount: tests.length,
             itemBuilder: (_, index) {
               final test = tests[index];
@@ -93,7 +93,7 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
                       ],
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(12),
                       child: Row(
                         children: [
                           Container(
@@ -120,7 +120,7 @@ class _MockTestListScreenState extends State<MockTestListScreen> {
                                 Text(
                                   test.title,
                                   style: GoogleFonts.poppins(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.white,
                                   ),
