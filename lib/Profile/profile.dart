@@ -2,9 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:rogzarpath/Mcq/bookmark_question.dart';
 import 'package:rogzarpath/Job/BookmarkedJobsScreen.dart';
+import 'package:rogzarpath/api_service.dart';
+import 'package:rogzarpath/constant/model.dart';
 import 'package:rogzarpath/loginscreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -50,6 +57,119 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+   bool _isLoading = false;
+
+Future<void> deleteProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+ SharedPreferences prefs = await SharedPreferences.getInstance();
+ String? googleId = prefs.getString('uid');
+ print(googleId);
+ print("google id........................................");
+    try {
+      final response = await http.post(
+  Uri.parse("${ApiService.appUrl}delete_profile.php"),
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: jsonEncode({
+    'google_id': googleId,
+  }),
+);
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        if (data['status'] == 'success') {
+          // Clear any stored data
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.clear();
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data['message'])),
+          );
+ Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+         
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data['message'] ?? 'Unknown error')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Server error: ${response.statusCode}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Something went wrong')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+ void confirmDelete() {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent dismiss by tapping outside
+    builder: (ctx) => AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      title: Row(
+        children: [
+          Icon(Icons.warning, color: Colors.red, size: 30),
+          SizedBox(width: 10),
+          Text("Delete Profile", style: GoogleFonts.poppins(color: Colors.red, fontWeight:FontWeight.w600)),
+        ],
+      ),
+      content: Text(
+        "Are you sure you want to delete your profile? "
+        "This action cannot be undone and all your data will be lost.",
+        style: TextStyle(fontSize: 16),
+      ),
+      actionsPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      actions: [
+        ElevatedButton.icon(
+          onPressed: () => Navigator.of(ctx).pop(),
+          icon: Icon(Icons.cancel),
+          label: Text("Cancel"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey.shade300,
+            foregroundColor: Colors.black,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.of(ctx).pop();
+            deleteProfile();
+          },
+          icon: Icon(Icons.delete_forever),
+          label: Text("Delete"),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
   Future<void> _openBookmarkedMCQ() async {
     Navigator.push(
       context,
@@ -75,6 +195,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                // _buildOption(Icons.person_outline, "Edit Profile", () {}),
                 _buildOption(Icons.quiz_outlined, "MCQ History", _openBookmarkedMCQ),
                 _buildOption(Icons.bookmark_border, "Bookmarked Jobs", _openBookmarkedJobs),
+                _buildOption(Icons.delete_forever, "Delete Profile", confirmDelete,color: Colors.red),
                 _buildOption(Icons.logout, "Logout", _logout, color: Colors.red),
                 const SizedBox(height: 30),
                 Center(

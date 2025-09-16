@@ -17,6 +17,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:rogzarpath/dashboard.dart';
 import 'package:rogzarpath/syllabus_list_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -137,7 +138,17 @@ final List<_HomeFeature> features = [
   ];
 
 
+ final String whatsappUrl = "https://chat.whatsapp.com/GnVhxxw7rpmJPNwophB8En";
 
+  // Function to open WhatsApp link
+  Future<void> _openWhatsApp() async {
+    final uri = Uri.parse(whatsappUrl);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      print("Could not launch WhatsApp");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +163,28 @@ final List<_HomeFeature> features = [
 ])
 ,
     
-
+       floatingActionButton: Container(
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.green,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              spreadRadius: 2,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: FloatingActionButton(
+          onPressed: _openWhatsApp,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.group, size: 32, color: Colors.white),
+        ),
+      ),
       appBar: AppBar(
         title:  Text("Rozgarpath",style: GoogleFonts.poppins(fontWeight:FontWeight.w600),),
         actions: [

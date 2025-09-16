@@ -24,8 +24,9 @@ class AuthService {
       User? user = userCredential.user;
 
       if (user != null) {
-        // Save locally
+          String? idToken = await user.getIdToken();
         SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('idToken', idToken??'');
         await prefs.setString('uid', user.uid);
         await prefs.setString('name', user.displayName ?? '');
         await prefs.setString('email', user.email ?? '');
