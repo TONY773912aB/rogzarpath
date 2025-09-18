@@ -8,7 +8,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About Rozgarpath'),
+        title: const Text('About RozgarPath'),
         backgroundColor: Colors.indigo,
         foregroundColor: Colors.white,
         elevation: 4,
@@ -28,10 +28,10 @@ class AboutPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
-              
+
               // App Intro
               Text(
-                "Rozgarpath is your trusted companion in the journey of government exam preparation. Designed for aspirants of SSC, UPSC, Railway, Banking, State PSCs, and other competitive exams, Rozgarpath provides timely updates, quality practice material, and a distraction-free study environment — all in one app.",
+                "RozgarPath is a private educational app (not affiliated with any government entity) designed to help aspirants prepare for Indian competitive exams such as SSC, UPSC, Railway, Banking, Defence, and State PSCs. It provides job alerts, mock tests, quizzes, study material, and more—all for educational purposes.",
                 style: GoogleFonts.poppins(fontSize: 15.5),
               ),
               const SizedBox(height: 24),
@@ -39,41 +39,43 @@ class AboutPage extends StatelessWidget {
               // Mission
               sectionTitle("🚀 Our Mission"),
               sectionText(
-                "To make government exam preparation accessible, affordable, and effective for every student, especially those from remote and rural areas who lack access to expensive coaching centers.",
+                "To make government exam preparation accessible, effective, and affordable for every student, especially those in remote areas with limited access to coaching.",
               ),
 
               // Features
-              sectionTitle("📚 What We Offer"),
-              bulletPoint("Daily Job Alerts – Real-time updates from SSC, UPSC, IBPS, etc."),
-              bulletPoint("Mock Tests & Quizzes – Improve your accuracy and speed."),
-              bulletPoint("Study Material & PDFs – Notes, previous papers, and more."),
-              bulletPoint("Daily Quiz – Practice a 5-minute quiz every day."),
-              bulletPoint("User-Friendly Interface – Smooth even on low-end devices."),
+              sectionTitle("📚 Key Features"),
+              bulletPoint("Daily Job Alerts – Sourced from official recruitment portals via our secure Vacancygyan.in API."),
+              bulletPoint("Mock Tests & Quizzes – Practice and track your performance."),
+              bulletPoint("PDF Notes & Study Material – Covers History, Polity, Science, Geography, Current Affairs, and more."),
+              bulletPoint("Daily Quiz – Improve GK and Current Affairs daily."),
+              bulletPoint("User-Friendly Interface – Smooth experience even on low-end devices."),
+              bulletPoint("Offline Mode (Coming Soon) – Download content and study without internet."),
 
               // Audience
-              sectionTitle("👥 Who We Serve"),
-              bulletPoint("First-time aspirants needing guidance."),
-              bulletPoint("Repeat candidates working to improve their scores."),
+              sectionTitle("👥 Who Can Use RozgarPath"),
+              bulletPoint("First-time aspirants seeking guidance."),
+              bulletPoint("Repeat candidates aiming to improve scores."),
               bulletPoint("Students preparing for central & state-level exams."),
-              bulletPoint("Working professionals balancing job and prep."),
+              bulletPoint("Working professionals balancing preparation with jobs."),
 
               // Why Choose
-              sectionTitle("💡 Why Choose Rozgarpath?"),
+              sectionTitle("💡 Why Choose RozgarPath?"),
               bulletPoint("🔔 Real-time Notifications"),
               bulletPoint("📊 Performance Tracking"),
-              bulletPoint("🌐 Hindi & English (Coming Soon)"),
-              bulletPoint("🆓 100% Free – No hidden charges"),
+              bulletPoint("🌐 Hindi & English Content"),
+              bulletPoint("🆓 Completely Free – No hidden charges"),
+              bulletPoint("✅ Trusted Educational Platform for Government Exams"),
 
-              // Our Promise
-              sectionTitle("🙏 Our Promise"),
+              // Disclaimer Note
+              sectionTitle("❗ Disclaimer"),
               sectionText(
-                "We are committed to supporting your journey with authentic information, regular updates, and exam-focused tools. Your success is our priority.",
+                "RozgarPath is not affiliated with any government authority. All job information is collected from official recruitment portals and Vacancygyan.in API. Users should verify details on official websites before applying.",
               ),
 
               // Contact
               sectionTitle("📞 Contact Us"),
               sectionText("📧 Email: Tonystark7739@gmail.com"),
-              sectionText("📍 Location: Gopalganj, Bihar"),
+              sectionText("📍 Location: Gopalganj, Bihar, India"),
 
               const SizedBox(height: 20),
             ],

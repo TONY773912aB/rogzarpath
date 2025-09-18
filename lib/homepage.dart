@@ -205,7 +205,46 @@ final List<_HomeFeature> features = [
          
          BannerCarousel(),
          
-           
+          Container(
+  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+  padding: const EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: Colors.indigo.shade50, // Light background for visibility
+    borderRadius: BorderRadius.circular(12), // Rounded corners
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 6,
+        offset: Offset(0, 3),
+      ),
+    ],
+    border: Border.all(color: Colors.indigo.shade200),
+  ),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Icon(
+        Icons.info,
+        color: Colors.indigo,
+        size: 20,
+      ),
+      const SizedBox(width: 8),
+      Expanded(
+        child: Text(
+          "RozgarPath is a private educational app and is not affiliated with or representing any government authority. All information provided is for educational purposes only.",
+          style: GoogleFonts.poppins(
+            fontSize: 11,
+            color: Colors.indigo.shade900,
+            fontStyle: FontStyle.normal,
+            letterSpacing: 0.5,
+            height: 1.4, // Line spacing for readability
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+ 
            Expanded(
         child: GridView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10 ),

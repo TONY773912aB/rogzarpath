@@ -15,7 +15,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   bool _isSigningIn = false;
-
+  
+  
   @override
   void initState() {
     super.initState();
@@ -23,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void saveLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance(); 
     prefs.setBool('isLoggedIn', true);
   }
 
