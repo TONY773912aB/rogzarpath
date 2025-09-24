@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/api_service.dart';
 import 'package:rogzarpath/constant/AppConstant.dart';
+import 'package:rogzarpath/constant/admanager.dart';
 import 'package:rogzarpath/constant/model.dart';
 import 'pdf_viewer_screen.dart';
 
@@ -65,62 +66,89 @@ class _SyllabusListScreenState extends State<SyllabusListScreen> {
           for (var item in snapshot.data!) {
             grouped.putIfAbsent(item.examName, () => []).add(item);
           }
-
+          
           return ListView(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-            children: grouped.entries.map((entry) {
-              return Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: Theme(
-                  data: Theme.of(context).copyWith(
-                    dividerColor: Colors.transparent,
-                  ),
-                  child: ExpansionTile(
-                    leading: const Icon(Icons.school, color: Colors.deepPurple),
-                    title: Text(
-                      entry.key,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.black87,
-                      ),
+  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+  children: [
+    for (int i = 0; i < grouped.entries.length; i++) ...[
+      // Syllabus Card
+      Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            dividerColor: Colors.transparent,
+          ),
+          child: ExpansionTile(
+            leading: const Icon(Icons.school, color: Colors.deepPurple),
+            title: Text(
+              grouped.entries.elementAt(i).key,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: Colors.black87,
+              ),
+            ),
+            children: grouped.entries.elementAt(i).value.map((pdf) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Card(
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  elevation: 2,
+                  child: ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    children: entry.value.map((pdf) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          elevation: 2,
-                          child: ListTile(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                            leading: const Icon(Icons.picture_as_pdf, color: Colors.red, size: 28),
-                            title: Text(
-                              pdf.pdfTitle,
-                              style: const TextStyle(fontWeight: FontWeight.w600),
-                            ),
-                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => PDFViewerScreen(pdf: pdf),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    }).toList(),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    leading: const Icon(Icons.picture_as_pdf, color: Colors.red, size: 28),
+                    title: Text(
+                      pdf.pdfTitle,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () {
+                      AdHelper.navigateWithInterstitial(
+                      context: context,
+                      destination:PDFViewerScreen(pdf: pdf),
+                      tapInterval: 3,  );
+                      
+                    },
                   ),
                 ),
               );
             }).toList(),
-          );
+          ),
+        ),
+      ),
+      
+      // Insert banner ad after every 2 ExpansionTiles
+      if ((i + 1) % 3 == 0)
+        FutureBuilder(
+          future: AdManager.fetchAds(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final ads = snapshot.data as List<dynamic>;
+              final bannerAd = ads.firstWhere(
+                (ad) => ad['ad_format'] == 'banner',
+                orElse: () => null,
+              );
+              if (bannerAd != null) {
+                return AdManager.loadBanner(
+                  bannerAd,
+                  onAdLoaded: () => print("🎯 Banner Ad Loaded"),
+                  onAdFailed: (error) => print("❌ Banner Ad Failed: $error"),
+                );
+              }
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+    ],
+  ],
+);
+
+        
         },
       ),
     );

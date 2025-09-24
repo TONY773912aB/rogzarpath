@@ -93,4 +93,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.multidex:multidex:2.0.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+    implementation 'com.google.android.gms:play-services-ads:22.1.0'  // Google AdMob
+    implementation 'com.facebook.android:audience-network-sdk:6.5.0'
 }

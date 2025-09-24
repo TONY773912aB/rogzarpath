@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/Mcq/subject_screen.dart';
 import 'package:rogzarpath/api_service.dart';
 import 'package:rogzarpath/constant/AppConstant.dart';
+import 'package:rogzarpath/constant/admanager.dart';
 
 class ExamScreen extends StatefulWidget {
   @override
@@ -66,14 +67,13 @@ class _ExamScreenState extends State<ExamScreen> {
                       final exam = exams[index];
                       return GestureDetector(
                         onTap: () {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => SubjectScreen(
+AdHelper.navigateWithInterstitial(
+    context: context,
+    destination: SubjectScreen(
         examId: exam['id'],
         examName: exam['name'],
       ),
-    ),
+    tapInterval: 3, // Show interstitial every 3 taps
   );
 },
 

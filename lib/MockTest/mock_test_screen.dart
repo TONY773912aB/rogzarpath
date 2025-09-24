@@ -85,11 +85,13 @@ String formatTime(int secondsLeft) {
       final int score = (result['score'] as num).toInt();
 final int correct = (result['correct'] as num).toInt();
 final int wrong = (result['wrong'] as num).toInt();
+final int submissionId = result['submission_id'];
 final int unattempted = questions.length - correct - wrong;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => MockTestResultScreen(
+             submissionId: submissionId,
            score: result['score'],
       total: questions.length,
       correct: result['correct'],

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:rogzarpath/api_service.dart';
 import 'package:rogzarpath/constant/AppConstant.dart';
+import 'package:rogzarpath/constant/admanager.dart';
 import 'package:rogzarpath/daily_news_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -179,11 +180,23 @@ class _DailyDetailScreenState extends State<DailyDetailScreen> {
   bool loading = true;
   String error = '';
   Map? data;
+  Map? nativeAd;
 
   @override
   void initState() {
     super.initState();
     fetchDetail();
+    loadNativeAd();
+  }
+   void loadNativeAd() async {
+    final ads = await AdManager.fetchAds();
+    final ad = ads.firstWhere(
+      (ad) => ad['ad_format'] == 'native',
+      orElse: () => null,
+    );
+    setState(() {
+      nativeAd = ad;
+    });
   }
 
   Future<void> fetchDetail() async {
@@ -242,27 +255,38 @@ if (rawBullets is List) {
         title: Text(data!['title'] ?? formatted,style: GoogleFonts.poppins(color:Colors.white, fontSize:16),)),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: ListView.separated(
-          itemCount: bullets.length,
-          separatorBuilder: (_, i) => const SizedBox(height: 8),
-          itemBuilder: (c, i) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 5, offset: const Offset(0, 2)),
-                ],
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView.separated(
+                itemCount: bullets.length,
+                separatorBuilder: (_, i) => const SizedBox(height: 8),
+                itemBuilder: (c, i) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 5, offset: const Offset(0, 2)),
+                      ],
+                    ),
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.blue,
+                        child: Text('${i + 1}', style: const TextStyle(color: Colors.white)),
+                      ),
+                      title: Text(bullets[i].toString(), style: GoogleFonts.poppins()),
+                    ),
+                  );
+                },
               ),
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Colors.blue,
-                  child: Text('${i + 1}', style: const TextStyle(color: Colors.white)),
-                ),
-                title: Text(bullets[i].toString(), style: GoogleFonts.poppins()),
-              ),
-            );
-          },
+            ),
+            if (nativeAd != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AdManager.loadNative(nativeAd!),
+            ),
+          ],
         ),
       ),
     );

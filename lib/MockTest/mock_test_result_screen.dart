@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:rogzarpath/MockTest/mockTestAnswersScreen.dart';
+import 'package:rogzarpath/api_service.dart';
 
 class MockTestResultScreen extends StatelessWidget {
+  final int submissionId;
   final int score;
   final int total;
   final int correct;
@@ -11,6 +16,7 @@ class MockTestResultScreen extends StatelessWidget {
 
   const MockTestResultScreen({
     super.key,
+    required this.submissionId,
     required this.score,
     required this.total,
     required this.correct,
@@ -18,6 +24,25 @@ class MockTestResultScreen extends StatelessWidget {
     required this.unattempted,
     required this.timeTaken,
   });
+
+  Future<List<Map<String, dynamic>>> fetchSubmissionAnswers(int submissionId) async {
+  final url = Uri.parse("${ApiService.appUrl}get_mock_test_answers.php?submission_id=$submissionId");
+
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body);
+
+    if (data['status'] == 'success') {
+      // Convert List<dynamic> → List<Map<String, dynamic>>
+      return List<Map<String, dynamic>>.from(data['data']);
+    } else {
+      throw Exception("Failed: ${data['message'] ?? 'Unknown error'}");
+    }
+  } else {
+    throw Exception("HTTP error: ${response.statusCode}");
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -123,18 +148,28 @@ class MockTestResultScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: () {
-                // Navigate to answers screen
-              },
-              icon: Icon(Icons.list, color: Colors.deepPurple),
-              label: Text("View Answers", style: GoogleFonts.poppins(fontSize: 16, color: Colors.deepPurple)),
-              style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.deepPurple),
-                padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-            ),
+           OutlinedButton.icon(
+  onPressed: () async {
+    // Example API fetch (replace with your API call)
+    final answers = await fetchSubmissionAnswers(submissionId); 
+    print("answer printed.....................................");
+    print(answers);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MockTestAnswersScreen(answers: answers),
+      ),
+    );
+  },
+  icon: Icon(Icons.list, color: Colors.deepPurple),
+  label: Text("View Answers", style: GoogleFonts.poppins(fontSize: 16, color: Colors.deepPurple)),
+  style: OutlinedButton.styleFrom(
+    side: BorderSide(color: Colors.deepPurple),
+    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  ),
+),
+
           ],
         ),
       ),

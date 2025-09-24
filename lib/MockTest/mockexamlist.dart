@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rogzarpath/MockTest/mock_test_list_screen.dart';
 import 'package:rogzarpath/api_service.dart';
 import 'package:rogzarpath/constant/AppConstant.dart';
+import 'package:rogzarpath/constant/admanager.dart';
 
 class MockExamList extends StatefulWidget {
   const MockExamList({super.key});
@@ -66,15 +67,17 @@ class _MockExamListState extends State<MockExamList> {
                       final exam = exams[index];
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MockTestListScreen(
+                          AdHelper.navigateWithInterstitial(
+    context: context,
+    destination: MockTestListScreen(
                                 examId:   int.parse( exam['id']),
                                 examName: exam['name'],
                               ),
-                            ),
-                          );
+    tapInterval: 3, // Show interstitial every 3 taps
+  );
+
+  
+                          
                         },
                         child: Container(
                           decoration: BoxDecoration(

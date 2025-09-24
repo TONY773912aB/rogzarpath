@@ -9,6 +9,7 @@ import 'package:rogzarpath/Job/job.dart';
 import 'package:rogzarpath/Mcq/bookmark_question.dart';
 import 'package:rogzarpath/Profile/aboutus.dart';
 import 'package:rogzarpath/Profile/deawer.dart';
+import 'package:rogzarpath/constant/admanager.dart';
 import 'package:rogzarpath/constant/model.dart';
 import 'package:rogzarpath/currentaffair/currentaffairtab.dart';
 import 'package:rogzarpath/daily_news_screen.dart';
@@ -197,134 +198,138 @@ final List<_HomeFeature> features = [
           ),
         ],
       ),
-      body: Container(
-        padding: const EdgeInsets.all(5),
-        child: Column(
-          children: [
-             
-         
-         BannerCarousel(),
-         
-          Container(
-  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-  padding: const EdgeInsets.all(12),
-  decoration: BoxDecoration(
-    color: Colors.indigo.shade50, // Light background for visibility
-    borderRadius: BorderRadius.circular(12), // Rounded corners
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black12,
-        blurRadius: 6,
-        offset: Offset(0, 3),
-      ),
-    ],
-    border: Border.all(color: Colors.indigo.shade200),
-  ),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Icon(
-        Icons.info,
-        color: Colors.indigo,
-        size: 20,
-      ),
-      const SizedBox(width: 8),
-      Expanded(
-        child: Text(
-          "RozgarPath is a private educational app and is not affiliated with or representing any government authority. All information provided is for educational purposes only.",
-          style: GoogleFonts.poppins(
-            fontSize: 11,
-            color: Colors.indigo.shade900,
-            fontStyle: FontStyle.normal,
-            letterSpacing: 0.5,
-            height: 1.4, // Line spacing for readability
-          ),
-        ),
-      ),
-    ],
-  ),
-),
- 
-           Expanded(
-        child: GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10 ),
-          itemCount: features.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 3,
-      mainAxisSpacing: 8,
-      crossAxisSpacing: 8,
-      childAspectRatio: 0.9,
-          ),
-          itemBuilder: (context, index) {
-      final feature = features[index];
-      return GestureDetector(
-        onTap: () => feature.onTap(context,index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
+      
+      
+      body: SingleChildScrollView(
+  child: Padding(
+    padding: const EdgeInsets.all(5),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+       
+       
+      
+
+        BannerCarousel(),
+
+       
+
+        // Disclaimer box
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.deepPurple.shade400,
-                Colors.deepPurple.shade600,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(20),
+            color: Colors.indigo.shade50,
+            borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.deepPurple.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(4, 6),
+                color: Colors.black12,
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+            border: Border.all(color: Colors.black),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(Icons.info, color: Colors.indigo, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "RozgarPath is a private educational app and is not affiliated with or representing any government authority. All information provided is for educational purposes only.",
+                  style: GoogleFonts.aBeeZee(
+                    fontSize: 9,
+                    color: Colors.indigo.shade900,
+                  ),
+                ),
               ),
             ],
           ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(20),
-            splashColor: Colors.white.withOpacity(0.2),
-            highlightColor: Colors.white.withOpacity(0.1),
-            onTap: () => feature.onTap(context,index),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Circle icon background
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.9),
-                  ),
-                  child: Icon(
-                    feature.icon,
-                    size: 36,
-                    color: Colors.deepPurple.shade700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  feature.label,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    color: Colors.white,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ),
-      );
+
+        const SizedBox(height: 10),
+
+        // Feature grid (shrinkWrap + no scroll)
+        GridView.builder(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 10),
+          itemCount: features.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 8,
+            crossAxisSpacing: 8,
+            childAspectRatio: 0.9,
+          ),
+          itemBuilder: (context, index) {
+            final feature = features[index];
+            return GestureDetector(
+              onTap: () => feature.onTap(context, index),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.deepPurple.shade400,
+                      Colors.deepPurple.shade600,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.deepPurple.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(4, 6),
+                    ),
+                  ],
+                ),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  splashColor: Colors.white.withOpacity(0.2),
+                  highlightColor: Colors.white.withOpacity(0.1),
+                  onTap: () => feature.onTap(context, index),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white.withOpacity(0.9),
+                        ),
+                        child: Icon(
+                          feature.icon,
+                          size: 36,
+                          color: Colors.deepPurple.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        feature.label,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w500,
+                          fontSize: 12,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
           },
         ),
-      )
-      
-          
-          ],
-        ),
-      ),
+      ],
+    ),
+  ),
+),
+
     );
   }
 }

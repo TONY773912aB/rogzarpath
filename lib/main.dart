@@ -7,6 +7,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:facebook_audience_network/facebook_audience_network.dart';
 
 // Global notification plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -68,6 +71,8 @@ Future<void> _showNotification(RemoteMessage message) async {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+   await MobileAds.instance.initialize();
+    FacebookAudienceNetwork.init();
 
   // Register background message handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
